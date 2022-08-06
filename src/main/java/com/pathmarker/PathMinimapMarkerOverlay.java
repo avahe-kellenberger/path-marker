@@ -3,8 +3,11 @@ package com.pathmarker;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
+import net.runelite.api.Varbits;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -38,20 +41,43 @@ public class PathMinimapMarkerOverlay extends Overlay
     public Dimension render(Graphics2D graphics)
     {
         angle = client.getMapAngle() * 0.0030679615D;
+        Widget minimapDrawWidget;
+        if (client.isResized())
+        {
+            if (client.getVarbitValue(Varbits.SIDE_PANELS) == 1)
+            {
+                minimapDrawWidget = client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_DRAW_AREA);
+            }
+            else
+            {
+                minimapDrawWidget = client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_STONES_DRAW_AREA);
+            }
+        }
+        else
+        {
+            minimapDrawWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_MINIMAP_DRAW_AREA);
+        }
+        if (minimapDrawWidget == null || minimapDrawWidget.isHidden())
+        {
+            return null;
+        }
+        Point minimapWidgetLocation = minimapDrawWidget.getCanvasLocation();
+        Point minimapPoint = new Point( minimapWidgetLocation.getX() + minimapDrawWidget.getWidth()/2, minimapWidgetLocation.getY() + minimapDrawWidget.getHeight()/2);
+        graphics.rotate(angle, minimapPoint.getX(), minimapPoint.getY());
         if (config.hoverPathMode() != PathMarkerConfig.pathMode.NEITHER)
         {
             for (WorldPoint worldPoint : plugin.getHoverPathTiles())
             {
                 if (config.hoverPathMode() == PathMarkerConfig.pathMode.BOTH || config.hoverPathMode() == PathMarkerConfig.pathMode.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.hoverPathColor1());
+                    renderMinimapTile(graphics, worldPoint, config.hoverPathColor1(), minimapPoint);
                 }
             }
             for (WorldPoint worldPoint : plugin.getHoverMiddlePathTiles())
             {
                 if (config.hoverPathMode() == PathMarkerConfig.pathMode.BOTH || config.hoverPathMode() == PathMarkerConfig.pathMode.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.hoverPathColor2());
+                    renderMinimapTile(graphics, worldPoint, config.hoverPathColor2(), minimapPoint);
                 }
             }
         }
@@ -61,37 +87,42 @@ public class PathMinimapMarkerOverlay extends Overlay
             {
                 if (config.activePathDrawLocations() == PathMarkerConfig.pathMode.BOTH || config.activePathDrawLocations() == PathMarkerConfig.pathMode.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.activePathColor1());
+                    renderMinimapTile(graphics, worldPoint, config.activePathColor1(), minimapPoint);
                 }
             }
             for (WorldPoint worldPoint : plugin.getActiveMiddlePathTiles())
             {
                 if (config.activePathDrawLocations() == PathMarkerConfig.pathMode.BOTH || config.activePathDrawLocations() == PathMarkerConfig.pathMode.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.activePathColor2());
+                    renderMinimapTile(graphics, worldPoint, config.activePathColor2(), minimapPoint);
                 }
             }
         }
+        graphics.rotate(-angle, minimapPoint.getX(), minimapPoint.getY());
         return null;
     }
 
-    private void renderMinimapTile(Graphics2D graphics, WorldPoint worldPoint, Color color)
+    private void renderMinimapTile(Graphics2D graphics, WorldPoint worldPoint, Color color, Point miniMapPoint)
     {
-        WorldPoint playerLocation = client.getLocalPlayer().getWorldLocation();
-        if (worldPoint.distanceTo(playerLocation) >= 50) {
-            return;
-        }
         LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
-        if (lp == null) {
+        if (lp == null)
+        {
             return;
         }
-        Point miniMapPoint = Perspective.localToMinimap(client, lp);
-        if (miniMapPoint == null) {
+        LocalPoint localLocation = client.getLocalPlayer().getLocalLocation();
+        if (localLocation == null)
+        {
             return;
         }
+        int x = lp.getX()/32 - localLocation.getX()/32;
+        int y = localLocation.getY()/32 - lp.getY()/32;
+        int squaredDistance = x*x + y*y;
+        if (squaredDistance > 5900)
+        {
+            return;
+        }
+        Point miniMapPoint2 = new Point(x + miniMapPoint.getX(), y + miniMapPoint.getY());
         graphics.setColor(color);
-        graphics.rotate(angle, miniMapPoint.getX(), miniMapPoint.getY());
-        graphics.fillRect(miniMapPoint.getX() - 2, miniMapPoint.getY() - 2, 4, 4);
-        graphics.rotate(-angle, miniMapPoint.getX(), miniMapPoint.getY());
+        graphics.fillRect(miniMapPoint2.getX() - 2, miniMapPoint2.getY() - 2, 4, 4);
     }
 }
