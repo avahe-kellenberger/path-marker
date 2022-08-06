@@ -72,6 +72,8 @@ public class PathMarkerPlugin extends Plugin
 	@Inject
 	private PathMarkerOverlay overlay;
 
+	public Pathfinder pathfinder;
+
 	private Tile lastSelectedSceneTile;
 
 	@Setter
@@ -129,13 +131,13 @@ public class PathMarkerPlugin extends Plugin
 
 	private static Map<Integer, Integer> npcBlocking;
 
-	private final int[][] directions = new int[128][128];
+	/*private final int[][] directions = new int[128][128];
 
 	private final int[][] distances = new int[128][128];
 
 	private final int[] bufferX = new int[4096];
 
-	private final int[] bufferY = new int[4096];
+	private final int[] bufferY = new int[4096];*/
 
 	static class PathDestination
 	{
@@ -187,6 +189,7 @@ public class PathMarkerPlugin extends Plugin
 		npcBlocking = readFile("npc_blocking.txt");
 		overlayManager.add(overlay);
 		keyManager.registerKeyListener(ctrlListener);
+		pathfinder = new Pathfinder(client, config, this);
 	}
 
 	@Override
@@ -202,7 +205,7 @@ public class PathMarkerPlugin extends Plugin
 		return configManager.getConfig(PathMarkerConfig.class);
 	}
 
-	private Pair<List<WorldPoint>, Boolean> pathTo(int approxDestinationX, int approxDestinationY, int sizeX, int sizeY, int objConfig, int objID)
+	/*private Pair<List<WorldPoint>, Boolean> pathTo(int approxDestinationX, int approxDestinationY, int sizeX, int sizeY, int objConfig, int objID)
 	{
 		Player player = client.getLocalPlayer();
 		if (player == null)
@@ -457,7 +460,7 @@ public class PathMarkerPlugin extends Plugin
 	private Pair<List<WorldPoint>, Boolean> pathTo(Tile other)
 	{
 		return pathTo(other.getSceneLocation().getX(), other.getSceneLocation().getY(), 1, 1, -1, -1);
-	}
+	}*/
 
 	private Pair<List<WorldPoint>, Boolean> pathToHover()
 	{
@@ -568,7 +571,7 @@ public class PathMarkerPlugin extends Plugin
 						objConfig = groundObject.getConfig();
 					}
 				}
-				return pathTo(x, y, sizeX, sizeY, objConfig, id);
+				return pathfinder.pathTo(x, y, sizeX, sizeY, objConfig, id);
 			}
 			case NPC_FIRST_OPTION:
 			case NPC_SECOND_OPTION:
@@ -597,7 +600,7 @@ public class PathMarkerPlugin extends Plugin
 				{
 					size = ((NPC) actor).getComposition().getSize();
 				}
-				return pathTo(x, y, size, size, -2, -1);
+				return pathfinder.pathTo(x, y, size, size, -2, -1);
 			}
 			case WALK:
 			default:
@@ -607,11 +610,11 @@ public class PathMarkerPlugin extends Plugin
 				{
 					return null;
 				}
-				return pathTo(client.getSelectedSceneTile());
+				return pathfinder.pathTo(client.getSelectedSceneTile());
 			}
 		}
 	}
-
+	/*
 	private boolean hasArrived(int baseX, int baseY, int targetX, int targetY, int sizeX, int sizeY, int objConfig, int objID, int[][] flags)
 	{
 		int objShape = -1;
@@ -822,7 +825,7 @@ public class PathMarkerPlugin extends Plugin
 			}
 		}
 		return false;
-	}
+	}*/
 
 	private void pathFromCheckpointTiles(List<WorldPoint> checkpointWPs, boolean running, List<WorldPoint> middlePathTiles, List<WorldPoint> pathTiles, boolean pathFound)
 	{
@@ -1060,7 +1063,7 @@ public class PathMarkerPlugin extends Plugin
 				{
 					return;
 				}
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
 				if (pathResult == null)
 				{
 					return;
@@ -1387,7 +1390,7 @@ public class PathMarkerPlugin extends Plugin
 					}
 				}
 				WorldPoint worldPoint = WorldPoint.fromScene(client, x, y, client.getPlane());
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(x, y, sizeX, sizeY, config, id);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(x, y, sizeX, sizeY, config, id);
 				activePathDestination = new PathDestination(worldPoint, sizeX, sizeY, config, id);
 				if (pathResult == null)
 				{
@@ -1436,7 +1439,7 @@ public class PathMarkerPlugin extends Plugin
 					size = ((NPC) actor).getComposition().getSize();
 				}
 				WorldPoint worldPoint = WorldPoint.fromScene(client, x, y, client.getPlane());
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(x, y, size, size, -2, -1);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(x, y, size, size, -2, -1);
 				activePathDestination = new PathDestination(worldPoint, size, size, -2, -1, actor);
 				if (pathResult == null)
 				{
@@ -1465,7 +1468,7 @@ public class PathMarkerPlugin extends Plugin
 				}
 				isRunning = willRunOnClick();
 				WorldPoint worldPoint = WorldPoint.fromScene(client, oldSelectedSceneTile.getSceneLocation().getX(), oldSelectedSceneTile.getSceneLocation().getY(), client.getPlane());
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(oldSelectedSceneTile);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(oldSelectedSceneTile);
 				activePathDestination = new PathDestination(worldPoint, 1, 1, -1, -1);
 				if (pathResult == null)
 				{
@@ -1507,7 +1510,7 @@ public class PathMarkerPlugin extends Plugin
 			{
 				isRunning = willRunOnClick();
 				WorldPoint worldPoint = WorldPoint.fromScene(client, selectedSceneTile.getSceneLocation().getX(), selectedSceneTile.getSceneLocation().getY(), client.getPlane());
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(selectedSceneTile);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(selectedSceneTile);
 				activePathDestination = new PathDestination(worldPoint, 1, 1, -1, -1);
 				if (pathResult != null)
 				{
@@ -1528,7 +1531,7 @@ public class PathMarkerPlugin extends Plugin
 			Point point = minimapToWorldPoint();
 			if (point != null)
 			{
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(point.getX(), point.getY(), 1,1,-1,-1);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(point.getX(), point.getY(), 1,1,-1,-1);
 				if (pathResult != null)
 				{
 					hoverCheckpointWPs = pathResult.getLeft();
@@ -1637,7 +1640,7 @@ public class PathMarkerPlugin extends Plugin
 			LocalPoint localPoint = LocalPoint.fromWorld(client, activePathDestination.actor.getWorldLocation());
 			if (localPoint != null)
 			{
-				Pair<List<WorldPoint>, Boolean> pathResult = pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
+				Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
 				if (pathResult != null)
 				{
 					pathActive = true;
