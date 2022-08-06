@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -24,9 +23,6 @@ public class PathMarkerOverlay extends Overlay
     @Inject
     private PathMarkerConfig config;
 
-    Color fillColour1;
-    Color fillColour2;
-
     @Inject
     private PathMarkerOverlay(Client client, PathMarkerConfig config, PathMarkerPlugin plugin)
     {
@@ -41,7 +37,7 @@ public class PathMarkerOverlay extends Overlay
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        /*//start
+        /*
         Scene scene = client.getScene();
         Tile[][][] tiles = scene.getTiles();
         int xOffset = 64 - client.getLocalPlayer().getLocalLocation().getSceneX();
@@ -71,32 +67,45 @@ public class PathMarkerOverlay extends Overlay
                     }
                 }
             }
-        }
-        //end*/
-        if (config.markHoverPath())
+        }*/
+        Color fillColour1;
+        Color fillColour2;
+        if (config.hoverPathMode() != PathMarkerConfig.pathMode.NEITHER)
         {
             fillColour1 = new Color(config.hoverPathColor1().getRed(),config.hoverPathColor1().getGreen(),config.hoverPathColor1().getBlue(),config.hoverPathFillOpacity());
             fillColour2 = new Color(config.hoverPathColor2().getRed(),config.hoverPathColor2().getGreen(),config.hoverPathColor2().getBlue(),config.hoverPathFillOpacity());
             for (WorldPoint worldPoint : plugin.getHoverPathTiles())
             {
-                renderTile(graphics, worldPoint, config.hoverPathColor1(), fillColour1);
+                if (config.hoverPathMode() == PathMarkerConfig.pathMode.BOTH || config.hoverPathMode() == PathMarkerConfig.pathMode.GAME_WORLD)
+                {
+                    renderTile(graphics, worldPoint, config.hoverPathColor1(), fillColour1);
+                }
             }
             for (WorldPoint worldPoint : plugin.getHoverMiddlePathTiles())
             {
-                renderTile(graphics, worldPoint, config.hoverPathColor2(), fillColour2);
+                if (config.hoverPathMode() == PathMarkerConfig.pathMode.BOTH || config.hoverPathMode() == PathMarkerConfig.pathMode.GAME_WORLD)
+                {
+                    renderTile(graphics, worldPoint, config.hoverPathColor2(), fillColour2);
+                }
             }
         }
-        if (config.markActivePath() && plugin.isPathActive())
+        if (config.activePathDrawLocations() != PathMarkerConfig.pathMode.NEITHER && plugin.isPathActive())
         {
             fillColour1 = new Color(config.activePathColor1().getRed(),config.activePathColor1().getGreen(),config.activePathColor1().getBlue(),config.activePathFillOpacity());
             fillColour2 = new Color(config.activePathColor2().getRed(),config.activePathColor2().getGreen(),config.activePathColor2().getBlue(),config.activePathFillOpacity());
             for (WorldPoint worldPoint : plugin.getActivePathTiles())
             {
-                renderTile(graphics, worldPoint, config.activePathColor1(), fillColour1);
+                if (config.activePathDrawLocations() == PathMarkerConfig.pathMode.BOTH || config.activePathDrawLocations() == PathMarkerConfig.pathMode.GAME_WORLD)
+                {
+                    renderTile(graphics, worldPoint, config.activePathColor1(), fillColour1);
+                }
             }
             for (WorldPoint worldPoint : plugin.getActiveMiddlePathTiles())
             {
-                renderTile(graphics, worldPoint, config.activePathColor2(), fillColour2);
+                if (config.activePathDrawLocations() == PathMarkerConfig.pathMode.BOTH || config.activePathDrawLocations() == PathMarkerConfig.pathMode.GAME_WORLD)
+                {
+                    renderTile(graphics, worldPoint, config.activePathColor2(), fillColour2);
+                }
             }
         }
         /*for (WorldPoint worldPoint : plugin.getActiveCheckpointWPs())

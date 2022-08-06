@@ -25,20 +25,27 @@ public interface PathMarkerConfig extends Config
 	)
 	String hoverPathSection = "hoverPath";
 
+	enum pathMode
+	{
+		BOTH,
+		GAME_WORLD,
+		MINIMAP,
+		NEITHER
+	}
 	@ConfigItem(
-		keyName = "markActivePath",
-		name = "Mark active path",
-		description = "Marks your active path",
+		keyName = "activePathDrawLocations",
+		name = "Draw location(s)",
+		description = "Marks your active path on the game world and/or the minimap",
 		section = activePathSection
 	)
-	default boolean markActivePath()
+	default pathMode activePathDrawLocations()
 	{
-		return true;
+		return pathMode.BOTH;
 	}
 
 	@ConfigItem(
 			keyName = "activePathColor1",
-			name = "Active path color 1",
+			name = "Main tile color",
 			description = "The main color of your active path",
 			section = activePathSection
 	)
@@ -49,7 +56,7 @@ public interface PathMarkerConfig extends Config
 
 	@ConfigItem(
 			keyName = "activePathColor2",
-			name = "Active path color 2",
+			name = "Secondary tile color",
 			description = "The secondary color of your active path, indicating the tiles you 'skip' while running.",
 			section = activePathSection
 	)
@@ -60,7 +67,7 @@ public interface PathMarkerConfig extends Config
 
 	@ConfigItem(
 			keyName = "activePathFillOpacity",
-			name = "Active path fill opacity",
+			name = "Tile fill opacity",
 			description = "Opacity of the active path's tile fill color",
 			section = activePathSection
 	)
@@ -70,19 +77,19 @@ public interface PathMarkerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "markHoverPath",
-			name = "Mark hover-path",
-			description = "Marks the path to the hovered location",
+			keyName = "hoverPathMode",
+			name = "Draw location(s)",
+			description = "Marks your hover-path on the game world and/or the minimap",
 			section = hoverPathSection
 	)
-	default boolean markHoverPath()
+	default pathMode hoverPathMode()
 	{
-		return false;
+		return pathMode.NEITHER;
 	}
 
 	@ConfigItem(
 			keyName = "hoverPathColor1",
-			name = "Hover-path color 1",
+			name = "Main color",
 			description = "The main color of the hover-path",
 			section = hoverPathSection
 	)
@@ -93,7 +100,7 @@ public interface PathMarkerConfig extends Config
 
 	@ConfigItem(
 			keyName = "hoverPathColor2",
-			name = "Hover-path color 2",
+			name = "Secondary color",
 			description = "The secondary color of the hover-path, indicating the tiles you 'skip' while running.",
 			section = hoverPathSection
 	)
@@ -104,7 +111,7 @@ public interface PathMarkerConfig extends Config
 
 	@ConfigItem(
 			keyName = "hoverPathFillOpacity",
-			name = "Hover-path fill opacity",
+			name = "Tile fill opacity",
 			description = "Opacity of the hover-path's tile fill color",
 			section = hoverPathSection
 	)
