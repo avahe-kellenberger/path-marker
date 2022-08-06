@@ -463,7 +463,7 @@ public class PathMarkerPlugin extends Plugin
                 runSkip = !runSkip;
                 continue;
             }
-            movementCheck = currentWA.canTravelInDirection(client, 0, 1, (worldPoint -> {
+            movementCheck = currentWA.canTravelInDirection(client, 0, dy, (worldPoint -> {
                 for (WorldArea worldArea : npcBlockWAs)
                 {
                     WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getPlane());
@@ -578,6 +578,7 @@ public class PathMarkerPlugin extends Plugin
                     }));
                     if (dy != 0 && movementCheck)
                     {
+                        log.info("check3");
                         currentWA = new WorldArea(currentWA.getX(), currentWA.getY() + dy, 1, 1, client.getPlane());
                     }
                 }
@@ -852,8 +853,7 @@ public class PathMarkerPlugin extends Plugin
     @Subscribe
     public void onMenuOptionClicked(MenuOptionClicked event)
     {
-        log.info("Menu option clicked, type: {}", event.getMenuAction());
-        log.info("Menu option: {}", event.getMenuEntry());
+        //log.info("Menu option clicked, type: {}", event.getMenuAction());
         switch (event.getMenuAction())
         {
             case EXAMINE_ITEM_GROUND:
@@ -1173,7 +1173,7 @@ public class PathMarkerPlugin extends Plugin
     {
         //log.info("Active cpts length: {}",activeCheckpointWPs.size());
         LocalPoint localDestinationLocation = client.getLocalDestinationLocation();
-        if (localDestinationLocation != null && pathActive)
+        if (localDestinationLocation != null && pathActive && activePathFound)
         {
             WorldPoint worldDestinationLocation = WorldPoint.fromLocal(client, localDestinationLocation);
             if (!worldDestinationLocation.equals(activeCheckpointWPs.get(activeCheckpointWPs.size() - 1)))
