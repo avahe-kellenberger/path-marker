@@ -52,7 +52,9 @@ import java.util.Map;
 
 @Slf4j
 @PluginDescriptor(
-        name = "Path Marker"
+        name = "Path Marker",
+        description = "Highlights your character's path to its target tile and/or to the hovered tile",
+        tags = {"route","pathfinder","hover","highlight","tiles"}
 )
 public class PathMarkerPlugin extends Plugin
 {
