@@ -1,6 +1,5 @@
 package com.pathmarker;
 
-import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -25,7 +24,7 @@ public interface PathMarkerConfig extends Config
 	)
 	String hoverPathSection = "hoverPath";
 
-	enum pathMode
+	enum drawLocations
 	{
 		BOTH,
 		GAME_WORLD,
@@ -38,9 +37,25 @@ public interface PathMarkerConfig extends Config
 		description = "Marks your active path on the game world and/or the minimap",
 		section = activePathSection
 	)
-	default pathMode activePathDrawLocations()
+	default drawLocations activePathDrawLocations()
 	{
-		return pathMode.BOTH;
+		return drawLocations.BOTH;
+	}
+
+	enum drawMode
+	{
+		FULL_PATH,
+		TARGET_TILE
+	}
+	@ConfigItem(
+			keyName = "activePathDrawMode",
+			name = "Draw mode",
+			description = "Determines which tiles are drawn",
+			section = activePathSection
+	)
+	default drawMode activePathDrawMode()
+	{
+		return drawMode.FULL_PATH;
 	}
 
 	@ConfigItem(
@@ -77,14 +92,25 @@ public interface PathMarkerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "hoverPathMode",
+			keyName = "hoverPathDrawLocations",
 			name = "Draw location(s)",
 			description = "Marks your hover-path on the game world and/or the minimap",
 			section = hoverPathSection
 	)
-	default pathMode hoverPathMode()
+	default drawLocations hoverPathDrawLocations()
 	{
-		return pathMode.NEITHER;
+		return drawLocations.NEITHER;
+	}
+
+	@ConfigItem(
+			keyName = "hoverPathDrawMode",
+			name = "Draw mode",
+			description = "Determines which tiles are drawn",
+			section = hoverPathSection
+	)
+	default drawMode hoverPathDrawMode()
+	{
+		return drawMode.FULL_PATH;
 	}
 
 	@ConfigItem(

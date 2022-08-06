@@ -223,7 +223,7 @@ public class PathMarkerPlugin extends Plugin
 
     private Pair<List<WorldPoint>, Boolean> pathToHover()
     {
-        if (config.hoverPathMode() == PathMarkerConfig.pathMode.NEITHER)
+        if (config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.NEITHER)
         {
             return null;
         }
@@ -1076,7 +1076,7 @@ public class PathMarkerPlugin extends Plugin
         Tile selectedSceneTile = client.getSelectedSceneTile();
         MenuEntry[] menuEntries = client.getMenuEntries();
         if (menuEntries.length == 1 && !client.isMenuOpen()
-            && (leftClicked || config.hoverPathMode() != PathMarkerConfig.pathMode.NEITHER))
+            && (leftClicked || config.hoverPathDrawLocations() != PathMarkerConfig.drawLocations.NEITHER))
         {
             // Potential minimap hover/click
             Point point = minimapToWorldPoint();

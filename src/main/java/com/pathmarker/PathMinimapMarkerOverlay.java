@@ -1,7 +1,6 @@
 package com.pathmarker;
 
 import net.runelite.api.Client;
-import net.runelite.api.Perspective;
 import net.runelite.api.Point;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.LocalPoint;
@@ -64,37 +63,49 @@ public class PathMinimapMarkerOverlay extends Overlay
         Point minimapWidgetLocation = minimapDrawWidget.getCanvasLocation();
         Point minimapPoint = new Point( minimapWidgetLocation.getX() + minimapDrawWidget.getWidth()/2, minimapWidgetLocation.getY() + minimapDrawWidget.getHeight()/2);
         graphics.rotate(angle, minimapPoint.getX(), minimapPoint.getY());
-        if (config.hoverPathMode() != PathMarkerConfig.pathMode.NEITHER)
+        if (config.hoverPathDrawLocations() != PathMarkerConfig.drawLocations.NEITHER)
         {
             for (WorldPoint worldPoint : plugin.getHoverPathTiles())
             {
-                if (config.hoverPathMode() == PathMarkerConfig.pathMode.BOTH || config.hoverPathMode() == PathMarkerConfig.pathMode.MINIMAP)
+                if (config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.hoverPathColor1(), minimapPoint);
+                    if (config.hoverPathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
+                    {
+                        renderMinimapTile(graphics, worldPoint, config.hoverPathColor1(), minimapPoint);
+                    }
                 }
             }
             for (WorldPoint worldPoint : plugin.getHoverMiddlePathTiles())
             {
-                if (config.hoverPathMode() == PathMarkerConfig.pathMode.BOTH || config.hoverPathMode() == PathMarkerConfig.pathMode.MINIMAP)
+                if (config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.hoverPathColor2(), minimapPoint);
+                    if (config.hoverPathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
+                    {
+                        renderMinimapTile(graphics, worldPoint, config.hoverPathColor2(), minimapPoint);
+                    }
                 }
             }
         }
-        if (config.activePathDrawLocations() != PathMarkerConfig.pathMode.NEITHER && plugin.isPathActive())
+        if (config.activePathDrawLocations() != PathMarkerConfig.drawLocations.NEITHER && plugin.isPathActive())
         {
             for (WorldPoint worldPoint : plugin.getActivePathTiles())
             {
-                if (config.activePathDrawLocations() == PathMarkerConfig.pathMode.BOTH || config.activePathDrawLocations() == PathMarkerConfig.pathMode.MINIMAP)
+                if (config.activePathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.activePathDrawLocations() == PathMarkerConfig.drawLocations.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.activePathColor1(), minimapPoint);
+                    if (config.activePathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
+                    {
+                        renderMinimapTile(graphics, worldPoint, config.activePathColor1(), minimapPoint);
+                    }
                 }
             }
             for (WorldPoint worldPoint : plugin.getActiveMiddlePathTiles())
             {
-                if (config.activePathDrawLocations() == PathMarkerConfig.pathMode.BOTH || config.activePathDrawLocations() == PathMarkerConfig.pathMode.MINIMAP)
+                if (config.activePathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.activePathDrawLocations() == PathMarkerConfig.drawLocations.MINIMAP)
                 {
-                    renderMinimapTile(graphics, worldPoint, config.activePathColor2(), minimapPoint);
+                    if (config.activePathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
+                    {
+                        renderMinimapTile(graphics, worldPoint, config.activePathColor2(), minimapPoint);
+                    }
                 }
             }
         }
