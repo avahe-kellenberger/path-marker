@@ -4,6 +4,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Keybind;
 import net.runelite.client.config.Range;
 
 import java.awt.*;
@@ -29,8 +30,7 @@ public interface PathMarkerConfig extends Config
     {
         BOTH,
         GAME_WORLD,
-        MINIMAP,
-        NEITHER
+        MINIMAP
     }
     @ConfigItem(
             keyName = "activePathDrawLocations",
@@ -43,7 +43,7 @@ public interface PathMarkerConfig extends Config
         return drawLocations.BOTH;
     }
 
-    enum drawMode
+    enum DrawMode
     {
         FULL_PATH,
         TARGET_TILE
@@ -54,9 +54,9 @@ public interface PathMarkerConfig extends Config
             description = "Determines which tiles are drawn",
             section = activePathSection
     )
-    default drawMode activePathDrawMode()
+    default DrawMode activePathDrawMode()
     {
-        return drawMode.FULL_PATH;
+        return DrawMode.FULL_PATH;
     }
 
     @ConfigItem(
@@ -95,6 +95,35 @@ public interface PathMarkerConfig extends Config
         return 50;
     }
 
+    enum PathDisplaySetting
+    {
+        ALWAYS,
+        WHILE_KEY_PRESSED,
+        TOGGLE_ON_KEYPRESS,
+        NEVER
+    }
+    @ConfigItem(
+            keyName = "activePathDisplaySetting",
+            name = "Display",
+            description = "Configures when the active path should be displayed",
+            section = activePathSection
+    )
+    default PathDisplaySetting activePathDisplaySetting()
+    {
+        return PathDisplaySetting.ALWAYS;
+    }
+
+    @ConfigItem(
+            keyName = "displayKeybindActivePath",
+            name = "Keybind",
+            description = "Sets the keybind for the Display Setting.",
+            section = activePathSection
+    )
+    default Keybind displayKeybindActivePath()
+    {
+        return Keybind.SHIFT;
+    }
+
     @ConfigItem(
             keyName = "hoverPathDrawLocations",
             name = "Draw location(s)",
@@ -103,7 +132,7 @@ public interface PathMarkerConfig extends Config
     )
     default drawLocations hoverPathDrawLocations()
     {
-        return drawLocations.NEITHER;
+        return drawLocations.BOTH;
     }
 
     @ConfigItem(
@@ -112,9 +141,9 @@ public interface PathMarkerConfig extends Config
             description = "Determines which tiles are drawn",
             section = hoverPathSection
     )
-    default drawMode hoverPathDrawMode()
+    default DrawMode hoverPathDrawMode()
     {
-        return drawMode.FULL_PATH;
+        return DrawMode.FULL_PATH;
     }
 
     @ConfigItem(
@@ -151,6 +180,28 @@ public interface PathMarkerConfig extends Config
     default int hoverPathFillOpacity()
     {
         return 50;
+    }
+
+    @ConfigItem(
+            keyName = "hoverPathDisplaySetting",
+            name = "Display",
+            description = "Configures when the hover-path should be displayed",
+            section = hoverPathSection
+    )
+    default PathDisplaySetting hoverPathDisplaySetting()
+    {
+        return PathDisplaySetting.NEVER;
+    }
+
+    @ConfigItem(
+            keyName = "displayKeybindHoverPath",
+            name = "Keybind",
+            description = "Sets the keybind for the Display Setting.",
+            section = hoverPathSection
+    )
+    default Keybind displayKeybindHoverPath()
+    {
+        return Keybind.SHIFT;
     }
 
     @ConfigItem(

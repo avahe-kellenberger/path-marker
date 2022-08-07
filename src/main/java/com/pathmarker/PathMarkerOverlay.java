@@ -39,7 +39,9 @@ public class PathMarkerOverlay extends Overlay
     {
         Color fillColour1;
         Color fillColour2;
-        if (config.hoverPathDrawLocations() != PathMarkerConfig.drawLocations.NEITHER)
+        if ((config.hoverPathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER)
+                && !(plugin.isPathActive() && config.drawOnlyIfNoActivePath())
+                && (plugin.isKeyDisplayHoverPath() || config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.ALWAYS))
         {
             fillColour1 = new Color(config.hoverPathColor1().getRed(),config.hoverPathColor1().getGreen(),config.hoverPathColor1().getBlue(),config.hoverPathFillOpacity());
             fillColour2 = new Color(config.hoverPathColor2().getRed(),config.hoverPathColor2().getGreen(),config.hoverPathColor2().getBlue(),config.hoverPathFillOpacity());
@@ -47,7 +49,7 @@ public class PathMarkerOverlay extends Overlay
             {
                 if (config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.GAME_WORLD)
                 {
-                    if (config.hoverPathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
+                    if (config.hoverPathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
                     {
                         renderTile(graphics, worldPoint, config.hoverPathColor1(), fillColour1);
                     }
@@ -57,14 +59,15 @@ public class PathMarkerOverlay extends Overlay
             {
                 if (config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.GAME_WORLD)
                 {
-                    if (config.hoverPathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
+                    if (config.hoverPathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
                     {
                         renderTile(graphics, worldPoint, config.hoverPathColor2(), fillColour2);
                     }
                 }
             }
         }
-        if (config.activePathDrawLocations() != PathMarkerConfig.drawLocations.NEITHER && plugin.isPathActive())
+        if (config.activePathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER && plugin.isPathActive()
+                && (plugin.isKeyDisplayActivePath() || config.activePathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.ALWAYS))
         {
             fillColour1 = new Color(config.activePathColor1().getRed(),config.activePathColor1().getGreen(),config.activePathColor1().getBlue(),config.activePathFillOpacity());
             fillColour2 = new Color(config.activePathColor2().getRed(),config.activePathColor2().getGreen(),config.activePathColor2().getBlue(),config.activePathFillOpacity());
@@ -72,7 +75,7 @@ public class PathMarkerOverlay extends Overlay
             {
                 if (config.activePathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.activePathDrawLocations() == PathMarkerConfig.drawLocations.GAME_WORLD)
                 {
-                    if (config.activePathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
+                    if (config.activePathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
                     {
                         renderTile(graphics, worldPoint, config.activePathColor1(), fillColour1);
                     }
@@ -82,7 +85,7 @@ public class PathMarkerOverlay extends Overlay
             {
                 if (config.activePathDrawLocations() == PathMarkerConfig.drawLocations.BOTH || config.activePathDrawLocations() == PathMarkerConfig.drawLocations.GAME_WORLD)
                 {
-                    if (config.activePathDrawMode() == PathMarkerConfig.drawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
+                    if (config.activePathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
                     {
                         renderTile(graphics, worldPoint, config.activePathColor2(), fillColour2);
                     }

@@ -102,6 +102,14 @@ public class PathMarkerPlugin extends Plugin
     private boolean calcTilePathOnNextClientTick;
 
     @Setter
+    @Getter
+    private boolean keyDisplayActivePath;
+
+    @Setter
+    @Getter
+    private boolean keyDisplayHoverPath;
+
+    @Setter
     private boolean leftClicked;
 
     @Getter
@@ -135,7 +143,7 @@ public class PathMarkerPlugin extends Plugin
     private MouseManager mouseManager;
 
     @Inject
-    private CtrlListener ctrlListener;
+    private KeyListener keyListener;
 
     @Inject
     private MouseListener mouseListener;
@@ -198,12 +206,13 @@ public class PathMarkerPlugin extends Plugin
         activePathStartedLastTick = false;
         activePathMismatchLastTick = false;
         leftClicked = false;
+        keyDisplayActivePath = false;
         isRunning = willRunOnClick();
         objectBlocking = readFile("loc_blocking.txt");
         npcBlocking = readFile("npc_blocking.txt");
         overlayManager.add(overlay);
         overlayManager.add(minimapOverlay);
-        keyManager.registerKeyListener(ctrlListener);
+        keyManager.registerKeyListener(keyListener);
         mouseManager.registerMouseListener(mouseListener);
         pathfinder = new Pathfinder(client, config, this);
     }
@@ -213,7 +222,7 @@ public class PathMarkerPlugin extends Plugin
     {
         overlayManager.remove(overlay);
         overlayManager.remove(minimapOverlay);
-        keyManager.unregisterKeyListener(ctrlListener);
+        keyManager.unregisterKeyListener(keyListener);
         mouseManager.unregisterMouseListener(mouseListener);
     }
 
@@ -225,34 +234,18 @@ public class PathMarkerPlugin extends Plugin
 
     private Pair<List<WorldPoint>, Boolean> pathToHover()
     {
-        if (config.hoverPathDrawLocations() == PathMarkerConfig.drawLocations.NEITHER)
-        {
-            return null;
-        }
-        MenuEntry[] menuEntries = client.getMenuEntries();
-        if (menuEntries.length == 0)
+        if (config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.NEVER)
         {
             return null;
         }
         MenuEntry menuEntry;
         if (!client.isMenuOpen())
         {
-            int i = 1;
-            menuEntry = menuEntries[menuEntries.length - 1];
-            MenuAction type = menuEntry.getType();
-            while (type == MenuAction.EXAMINE_ITEM_GROUND || type == MenuAction.EXAMINE_NPC || type == MenuAction.EXAMINE_OBJECT)
-            {
-                // For some reason, RuneLite considers the "Examine" options to be the first menuEntryOptions when no right-click menu is open.
-                // It's impossible to have "Examine" as left-click option, a far as I'm aware.
-                // The first non-Examine option is the real left-click option.
-                i += 1;
-                menuEntry = menuEntries[menuEntries.length - i];
-                type = menuEntry.getType();
-            }
+            menuEntry = oldMenuEntries[oldMenuEntries.length - 1];
         }
         else
         {
-            menuEntry = hoveredMenuEntry(menuEntries);
+            menuEntry = hoveredMenuEntry(oldMenuEntries);
         }
         switch (menuEntry.getType())
         {
@@ -1078,7 +1071,7 @@ public class PathMarkerPlugin extends Plugin
         Tile selectedSceneTile = client.getSelectedSceneTile();
         MenuEntry[] menuEntries = client.getMenuEntries();
         if (menuEntries.length == 1 && !client.isMenuOpen()
-            && (leftClicked || config.hoverPathDrawLocations() != PathMarkerConfig.drawLocations.NEITHER))
+            && (leftClicked || (config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.NEVER)))
         {
             // Potential minimap hover/click
             Point point = minimapToWorldPoint();
@@ -1178,7 +1171,12 @@ public class PathMarkerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        //log.info("Active cpts length: {}",activeCheckpointWPs.size());
+        MenuEntry[] menuEntries = client.getMenuEntries();
+        log.info(" ");
+        for (MenuEntry entry : menuEntries)
+        {
+            log.info("{}",entry.getType());
+        }
         LocalPoint localDestinationLocation = client.getLocalDestinationLocation();
         if (localDestinationLocation != null && pathActive && activePathFound)
         {
