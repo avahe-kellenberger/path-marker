@@ -1,12 +1,10 @@
 package com.pathmarker;
 
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 
 import javax.inject.Inject;
 import java.awt.event.MouseEvent;
 
-@Slf4j
 public class MouseListener implements net.runelite.client.input.MouseListener
 {
     @Inject

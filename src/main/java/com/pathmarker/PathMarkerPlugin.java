@@ -3,7 +3,6 @@ package com.pathmarker;
 import com.google.inject.Provides;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.DecorativeObject;
@@ -50,7 +49,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @PluginDescriptor(
         name = "Path Marker",
         description = "Highlights your character's path to its target tile and/or to the hovered tile",
@@ -391,8 +389,6 @@ public class PathMarkerPlugin extends Plugin
         while (currentWA.toWorldPoint().getX() != checkpointWPs.get(checkpointWPs.size() - 1).getX()
                 || currentWA.toWorldPoint().getY() != checkpointWPs.get(checkpointWPs.size() - 1).getY())
         {
-            //log.info("checked tile: {}",currentWA.toWorldPoint());
-            //log.info("last cpt: {}",checkpointWPs.get(checkpointWPs.size() - 1));
             WorldPoint cpTileWP = checkpointWPs.get(cpTileIndex);
             if (currentWA.toWorldPoint().equals(cpTileWP))
             {
@@ -577,7 +573,6 @@ public class PathMarkerPlugin extends Plugin
                     }));
                     if (dy != 0 && movementCheck)
                     {
-                        log.info("check3");
                         currentWA = new WorldArea(currentWA.getX(), currentWA.getY() + dy, 1, 1, client.getPlane());
                     }
                 }
@@ -852,7 +847,6 @@ public class PathMarkerPlugin extends Plugin
     @Subscribe
     public void onMenuOptionClicked(MenuOptionClicked event)
     {
-        log.info("Menu option clicked, type: {}", event.getMenuAction());
         switch (event.getMenuAction())
         {
             case EXAMINE_ITEM_GROUND:
@@ -1090,7 +1084,6 @@ public class PathMarkerPlugin extends Plugin
                     {
                         isRunning = willRunOnClick();
                         activePathDestination = new PathDestination(WorldPoint.fromScene(client, point.getX(), point.getY(), client.getPlane()), 1, 1, -1, -1);
-                        log.info("{}",WorldPoint.fromScene(client, point.getX(), point.getY(), client.getPlane()));
                         lastTickWorldLocation = client.getLocalPlayer().getWorldLocation();
                         pathActive = true;
                         activeCheckpointWPs = pathResult.getLeft();
@@ -1171,12 +1164,6 @@ public class PathMarkerPlugin extends Plugin
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        MenuEntry[] menuEntries = client.getMenuEntries();
-        log.info(" ");
-        for (MenuEntry entry : menuEntries)
-        {
-            log.info("{}",entry.getType());
-        }
         LocalPoint localDestinationLocation = client.getLocalDestinationLocation();
         if (localDestinationLocation != null && pathActive && activePathFound)
         {

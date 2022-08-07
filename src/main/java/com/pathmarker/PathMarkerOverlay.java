@@ -1,6 +1,5 @@
 package com.pathmarker;
 
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.coords.LocalPoint;
@@ -14,7 +13,6 @@ import net.runelite.client.ui.overlay.OverlayUtil;
 import javax.inject.Inject;
 import java.awt.*;
 
-@Slf4j
 public class PathMarkerOverlay extends Overlay
 {
     private final Client client;
@@ -92,10 +90,6 @@ public class PathMarkerOverlay extends Overlay
                 }
             }
         }
-        /*for (WorldPoint worldPoint : plugin.getActiveCheckpointWPs())
-        {
-            renderTile(graphics, worldPoint, Color.GREEN);
-        }*/
         return null;
     }
 

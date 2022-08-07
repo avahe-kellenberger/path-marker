@@ -1,11 +1,8 @@
 package com.pathmarker;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.inject.Inject;
 import java.awt.event.KeyEvent;
 
-@Slf4j
 public class KeyListener implements net.runelite.client.input.KeyListener
 {
     @Inject
