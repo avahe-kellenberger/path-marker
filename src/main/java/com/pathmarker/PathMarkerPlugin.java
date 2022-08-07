@@ -3,6 +3,7 @@ package com.pathmarker;
 import com.google.inject.Provides;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.DecorativeObject;
@@ -54,6 +55,8 @@ import java.util.Map;
         description = "Highlights your character's path to its target tile and/or to the hovered tile",
         tags = {"route","pathfinder","hover","highlight","tiles"}
 )
+
+@Slf4j
 public class PathMarkerPlugin extends Plugin
 {
     @Inject
@@ -232,18 +235,39 @@ public class PathMarkerPlugin extends Plugin
 
     private Pair<List<WorldPoint>, Boolean> pathToHover()
     {
-        if (config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.NEVER)
+        MenuEntry[] menuEntries = client.getMenuEntries();
+        if (menuEntries.length == 0)
         {
             return null;
         }
         MenuEntry menuEntry;
         if (!client.isMenuOpen())
         {
-            menuEntry = oldMenuEntries[oldMenuEntries.length - 1];
+            int i = 1;
+            menuEntry = menuEntries[menuEntries.length - 1];
+            MenuAction type = menuEntry.getType();
+            while (type == MenuAction.EXAMINE_ITEM_GROUND
+                    || type == MenuAction.EXAMINE_NPC
+                    || type == MenuAction.EXAMINE_OBJECT
+                    || type == MenuAction.RUNELITE
+                    || type == MenuAction.RUNELITE_HIGH_PRIORITY
+                    || type == MenuAction.RUNELITE_INFOBOX
+                    || type == MenuAction.RUNELITE_OVERLAY
+                    || type == MenuAction.RUNELITE_PLAYER
+                    || type == MenuAction.RUNELITE_OVERLAY_CONFIG)
+            {
+                // For some reason, RuneLite considers the "Examine" options to be the first menuEntryOptions when no right-click menu is open.
+                // It's impossible to have "Examine" as left-click option, a far as I'm aware.
+                // The first non-Examine option is the real left-click option.
+                // Oh, and apparently the issue is also there with RuneLite menu entries, so It'll be assumed those are never left-click.
+                i += 1;
+                menuEntry = menuEntries[menuEntries.length - i];
+                type = menuEntry.getType();
+            }
         }
         else
         {
-            menuEntry = hoveredMenuEntry(oldMenuEntries);
+            menuEntry = hoveredMenuEntry(menuEntries);
         }
         switch (menuEntry.getType())
         {
@@ -583,7 +607,7 @@ public class PathMarkerPlugin extends Plugin
                 break;
             }
         }
-        if (steps == 0)
+        if (steps == 0 && pathActive)
         {
             WorldPoint lastActiveCPTile = activeCheckpointWPs.get(0);
             activeCheckpointWPs.clear();
@@ -595,9 +619,6 @@ public class PathMarkerPlugin extends Plugin
         }
         if (!currentWA.toWorldPoint().equals(client.getLocalPlayer().getWorldLocation()))
         {
-			/*log.info("after {}",currentWA.toWorldPoint());
-			log.info("actual {}",client.getLocalPlayer().getWorldLocation());
-			log.info("size {}", activeCheckpointWPs.size());*/
             if (activePathStartedLastTick)
             {
                 LocalPoint localPoint = LocalPoint.fromWorld(client, activePathDestination.worldPoint);
@@ -1096,7 +1117,7 @@ public class PathMarkerPlugin extends Plugin
         }
         if (lastSelectedSceneTile==null || lastSelectedSceneTile!=selectedSceneTile
                 || (client.isMenuOpen() && hoveredMenuEntry(menuEntries) != lastSelectedMenuEntry)
-                || !Arrays.equals(oldMenuEntries, menuEntries))
+                || oldMenuEntries.length != menuEntries.length)
         {
             if (client.isMenuOpen())
             {
@@ -1109,10 +1130,6 @@ public class PathMarkerPlugin extends Plugin
                 {
                     hoverCheckpointWPs = pathResult.getLeft();
                     hoverPathFound = pathResult.getRight();
-                    if (hoverCheckpointWPs != null)
-                    {
-                        lastSelectedSceneTile = selectedSceneTile;
-                    }
                 }
             }
         }
@@ -1120,6 +1137,7 @@ public class PathMarkerPlugin extends Plugin
         oldMenuEntries = menuEntries;
         leftClicked = false;
         lastMouseCanvasPosition=client.getMouseCanvasPosition();
+        lastSelectedSceneTile = selectedSceneTile;
         pathFromCheckpointTiles(hoverCheckpointWPs, willRunOnClick(), hoverMiddlePathTiles, hoverPathTiles, hoverPathFound);
     }
 
