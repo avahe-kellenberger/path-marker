@@ -121,7 +121,7 @@ public interface PathMarkerConfig extends Config
     )
     default Keybind displayKeybindActivePath()
     {
-        return Keybind.SHIFT;
+        return Keybind.NOT_SET;
     }
 
     @ConfigItem(
@@ -148,7 +148,7 @@ public interface PathMarkerConfig extends Config
 
     @ConfigItem(
             keyName = "hoverPathColor1",
-            name = "Main color",
+            name = "Main tile color",
             description = "The main color of the hover-path",
             section = hoverPathSection
     )
@@ -159,7 +159,7 @@ public interface PathMarkerConfig extends Config
 
     @ConfigItem(
             keyName = "hoverPathColor2",
-            name = "Secondary color",
+            name = "Secondary tile color",
             description = "The secondary color of the hover-path, indicating the tiles you 'skip' while running.",
             section = hoverPathSection
     )
@@ -201,7 +201,7 @@ public interface PathMarkerConfig extends Config
     )
     default Keybind displayKeybindHoverPath()
     {
-        return Keybind.SHIFT;
+        return Keybind.NOT_SET;
     }
 
     @ConfigItem(
