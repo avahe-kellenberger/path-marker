@@ -1,5 +1,6 @@
 package com.pathmarker;
 
+import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -59,6 +60,7 @@ public interface PathMarkerConfig extends Config
         return DrawMode.FULL_PATH;
     }
 
+    @Alpha
     @ConfigItem(
             keyName = "activePathColor1",
             name = "Main tile color",
@@ -67,9 +69,10 @@ public interface PathMarkerConfig extends Config
     )
     default Color activePathColor1()
     {
-        return Color.RED;
+        return new Color(255,0,0,50);
     }
 
+    @Alpha
     @ConfigItem(
             keyName = "activePathColor2",
             name = "Secondary tile color",
@@ -78,21 +81,7 @@ public interface PathMarkerConfig extends Config
     )
     default Color activePathColor2()
     {
-        return Color.YELLOW;
-    }
-
-    @Range(
-            max = 255
-    )
-    @ConfigItem(
-            keyName = "activePathFillOpacity",
-            name = "Tile fill opacity",
-            description = "Opacity of the active path's tile fill color",
-            section = activePathSection
-    )
-    default int activePathFillOpacity()
-    {
-        return 50;
+        return new Color(255,255,0,50);
     }
 
     enum PathDisplaySetting
@@ -146,6 +135,7 @@ public interface PathMarkerConfig extends Config
         return DrawMode.FULL_PATH;
     }
 
+    @Alpha
     @ConfigItem(
             keyName = "hoverPathColor1",
             name = "Main tile color",
@@ -154,9 +144,10 @@ public interface PathMarkerConfig extends Config
     )
     default Color hoverPathColor1()
     {
-        return Color.MAGENTA;
+        return new Color(255,0,255,50);
     }
 
+    @Alpha
     @ConfigItem(
             keyName = "hoverPathColor2",
             name = "Secondary tile color",
@@ -165,21 +156,7 @@ public interface PathMarkerConfig extends Config
     )
     default Color hoverPathColor2()
     {
-        return Color.GREEN;
-    }
-
-    @Range(
-            max = 255
-    )
-    @ConfigItem(
-            keyName = "hoverPathFillOpacity",
-            name = "Tile fill opacity",
-            description = "Opacity of the hover-path's tile fill color",
-            section = hoverPathSection
-    )
-    default int hoverPathFillOpacity()
-    {
-        return 50;
+        return new Color(0,1,0,0.2f);
     }
 
     @ConfigItem(
