@@ -1086,7 +1086,7 @@ public class PathMarkerPlugin extends Plugin
         Tile selectedSceneTile = client.getSelectedSceneTile();
         MenuEntry[] menuEntries = client.getMenuEntries();
         if (menuEntries.length == 1 && !client.isMenuOpen()
-            && (leftClicked || (config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.NEVER)))
+            && (leftClicked || (config.hoverPathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER)))
         {
             // Potential minimap hover/click
             Point point = minimapToWorldPoint();
