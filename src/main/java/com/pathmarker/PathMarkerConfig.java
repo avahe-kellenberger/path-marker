@@ -116,7 +116,7 @@ public interface PathMarkerConfig extends Config
     @ConfigItem(
             keyName = "displayKeybindActivePath",
             name = "Keybind",
-            description = "Sets the keybind for the Display Setting.",
+            description = "Sets the keybind for the Display setting.",
             section = activePathSection
     )
     default Keybind displayKeybindActivePath()
@@ -196,7 +196,7 @@ public interface PathMarkerConfig extends Config
     @ConfigItem(
             keyName = "displayKeybindHoverPath",
             name = "Keybind",
-            description = "Sets the keybind for the Display Setting.",
+            description = "Sets the keybind for the Display setting.",
             section = hoverPathSection
     )
     default Keybind displayKeybindHoverPath()
