@@ -1,8 +1,8 @@
 # Path marker
-![image](https://user-images.githubusercontent.com/52377234/183302759-365a8b06-7340-4c2b-8a9d-cf776cc1b7bf.png)  
 There are two categories:
 - Active path: Highlights your currently active path.
 - Hover-path: Highlights the path you'd do if you would leftclick.
+![image](https://user-images.githubusercontent.com/52377234/183302759-365a8b06-7340-4c2b-8a9d-cf776cc1b7bf.png)  
 ### Config options:
 - Display: Always, While keybind pressed, Toggle on keybind, Never
 - Draw location(s): Game map, Minimap, Both
