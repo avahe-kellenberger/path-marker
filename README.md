@@ -10,5 +10,4 @@ There are two categories:
 - Keybind: sets the keybind for the Display setting
 - Main tile color: the color of the path's tiles you're going to visit
 - Secondary tile color: the color of the path's tiles you're going to "skip" due to running over them
-- Tile fill opacity: determines the opacity of the path's tiles
 - Draw only if no active path: stops the hover-path from being drawn if there's an active path
