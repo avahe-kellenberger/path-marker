@@ -121,7 +121,7 @@ public interface PathMarkerConfig extends Config
     )
     default drawLocations hoverPathDrawLocations()
     {
-        return drawLocations.BOTH;
+        return drawLocations.MINIMAP;
     }
 
     @ConfigItem(
@@ -167,7 +167,7 @@ public interface PathMarkerConfig extends Config
     )
     default PathDisplaySetting hoverPathDisplaySetting()
     {
-        return PathDisplaySetting.NEVER;
+        return PathDisplaySetting.ALWAYS;
     }
 
     @ConfigItem(
@@ -184,7 +184,7 @@ public interface PathMarkerConfig extends Config
     @ConfigItem(
             keyName = "drawOnlyIfNoActivePath",
             name = "Draw only if no active path",
-            description = "Marks the path to your hovered location only if you don't have an active path",
+            description = "Marks the path to your hovered location only if you don't have an active path visible",
             position = 0,
             section = hoverPathSection
     )
