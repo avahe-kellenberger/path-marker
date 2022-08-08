@@ -64,7 +64,7 @@ public class PathMinimapMarkerOverlay extends Overlay
         Point minimapPoint = new Point( minimapWidgetLocation.getX() + minimapDrawWidget.getWidth()/2, minimapWidgetLocation.getY() + minimapDrawWidget.getHeight()/2);
         graphics.rotate(angle, minimapPoint.getX(), minimapPoint.getY());
         if ((config.hoverPathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER)
-                && !(plugin.isPathActive() && config.drawOnlyIfNoActivePath())
+                && (config.activePathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.NEVER || !plugin.isPathActive() || !config.drawOnlyIfNoActivePath())
                 && (plugin.isKeyDisplayHoverPath() || config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.ALWAYS))
         {
             for (WorldPoint worldPoint : plugin.getHoverPathTiles())

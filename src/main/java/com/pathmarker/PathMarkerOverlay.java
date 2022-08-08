@@ -36,7 +36,7 @@ public class PathMarkerOverlay extends Overlay
     public Dimension render(Graphics2D graphics)
     {
         if ((config.hoverPathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER)
-                && !(plugin.isPathActive() && config.drawOnlyIfNoActivePath())
+                && (config.activePathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.NEVER || !plugin.isPathActive() || !config.drawOnlyIfNoActivePath())
                 && (plugin.isKeyDisplayHoverPath() || config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.ALWAYS))
         {
             for (WorldPoint worldPoint : plugin.getHoverPathTiles())
