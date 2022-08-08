@@ -15,6 +15,6 @@ There are two categories:
 ### Known issues:
 - There's no path overlay when following a player. This won't be fixed as it's rare to happen and hard/impossible to implement.
 - The data the plugin uses to check from which side(s) you can interact with an object is manually generated from the client's cache. RuneLite does not offer an api to get that info, and I can't add it to RuneLite either because it requires Mixin edits (which aren't open source). So if/when new objects are added of which you want to see a correct path towards, feel free to let me know.
-- The data the plugin uses to check if you can't move through a NPC (e.g. bearded gorillas on Ape Atoll or Brawlers in Pest Control) is manually made. There are probably a lot of such NPC's I didn't implement. If you happen to stumble on such NPC, please let me know and I'll update the data.
+- The data the plugin uses to check if you can't move through a NPC (e.g. bearded gorillas on Ape Atoll or Brawlers in Pest Control) is manually made, as the client does not have that info. There are probably a lot of such NPC's I didn't implement. If you happen to stumble on such NPC, please let me know and I'll update the data.
 ### Contact options:
 You can submit an Issue on this github project, but I'll be best available on Discord (GeChallengeM#9201), either in DM's or through RuneLite's discord server if that's not possible.
