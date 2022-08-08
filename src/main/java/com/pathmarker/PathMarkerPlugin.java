@@ -45,7 +45,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -622,21 +621,20 @@ public class PathMarkerPlugin extends Plugin
             if (activePathStartedLastTick)
             {
                 LocalPoint localPoint = LocalPoint.fromWorld(client, activePathDestination.worldPoint);
-                if (localPoint == null)
+                if (localPoint != null)
                 {
-                    return;
+                    Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
+                    if (pathResult == null)
+                    {
+                        return;
+                    }
+                    lastTickWorldLocation = client.getLocalPlayer().getWorldLocation();
+                    pathActive = true;
+                    activeCheckpointWPs = pathResult.getLeft();
+                    activePathFound = pathResult.getRight();
+                    pathFromCheckpointTiles(activeCheckpointWPs, isRunning, activeMiddlePathTiles, activePathTiles, activePathFound);
+                    activePathStartedLastTick = false;
                 }
-                Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
-                if (pathResult == null)
-                {
-                    return;
-                }
-                lastTickWorldLocation = client.getLocalPlayer().getWorldLocation();
-                pathActive = true;
-                activeCheckpointWPs = pathResult.getLeft();
-                activePathFound = pathResult.getRight();
-                pathFromCheckpointTiles(activeCheckpointWPs, isRunning, activeMiddlePathTiles, activePathTiles, activePathFound);
-                activePathStartedLastTick = false;
             }
             else if (activePathMismatchLastTick)
             {
@@ -805,7 +803,7 @@ public class PathMarkerPlugin extends Plugin
         }
     }
 
-    private Point minimapToWorldPoint()
+    private Point minimapToScenePoint()
     {
         if (client.getMenuEntries().length != 1 || lastMouseCanvasPosition == null)
         {
@@ -1089,7 +1087,7 @@ public class PathMarkerPlugin extends Plugin
             && (leftClicked || (config.hoverPathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER)))
         {
             // Potential minimap hover/click
-            Point point = minimapToWorldPoint();
+            Point point = minimapToScenePoint();
             if (point != null)
             {
                 Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(point.getX(), point.getY(), 1,1,-1,-1);
@@ -1107,7 +1105,7 @@ public class PathMarkerPlugin extends Plugin
                         activePathDestination = new PathDestination(WorldPoint.fromScene(client, point.getX(), point.getY(), client.getPlane()), 1, 1, -1, -1);
                         lastTickWorldLocation = client.getLocalPlayer().getWorldLocation();
                         pathActive = true;
-                        activeCheckpointWPs = pathResult.getLeft();
+                        activeCheckpointWPs = new ArrayList<>(pathResult.getLeft());
                         activePathFound = pathResult.getRight();
                         pathFromCheckpointTiles(activeCheckpointWPs, isRunning, activeMiddlePathTiles, activePathTiles, activePathFound);
                         activePathStartedLastTick = true;
@@ -1165,19 +1163,6 @@ public class PathMarkerPlugin extends Plugin
         }
         return menuEntries[0];
     }
-
-	/*
-	@Subscribe
-	public void onMenuEntryAdded(MenuEntryAdded event)
-	{
-		Pair<List<WorldPoint>, Boolean> pathResult = pathToHover();
-		if (pathResult == null)
-		{
-			return;
-		}
-		hoverCheckpointWPs = pathResult.getLeft();
-		hoverPathFound = pathResult.getRight();
-	}*/
 
     @Subscribe
     public void onGameTick(GameTick event)
