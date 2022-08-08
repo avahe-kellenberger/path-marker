@@ -16,17 +16,17 @@ public class MouseListener implements net.runelite.client.input.MouseListener
     @Override
     public MouseEvent mouseClicked(MouseEvent mouseEvent)
     {
-        if (mouseEvent.getButton()==MouseEvent.BUTTON1)
-        {
-            plugin.setLeftClicked(true);
-            plugin.setLastMouseCanvasPosition(client.getMouseCanvasPosition());
-        }
         return mouseEvent;
     }
 
     @Override
     public MouseEvent mousePressed(MouseEvent mouseEvent)
     {
+        if (mouseEvent.getButton()==MouseEvent.BUTTON1)
+        {
+            plugin.setLeftClicked(true);
+            plugin.setLastMouseCanvasPosition(client.getMouseCanvasPosition());
+        }
         return mouseEvent;
     }
 
