@@ -616,7 +616,7 @@ public class PathMarkerPlugin extends Plugin
             activePathMismatchLastTick = true;
             return;
         }
-        if (!currentWA.toWorldPoint().equals(client.getLocalPlayer().getWorldLocation()))
+        if (!currentWA.toWorldPoint().equals(client.getLocalPlayer().getWorldLocation()) && pathActive)
         {
             if (activePathStartedLastTick)
             {
