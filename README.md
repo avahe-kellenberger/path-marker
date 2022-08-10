@@ -3,6 +3,8 @@ There are two categories:
 - Active path: Highlights your currently active path.
 - Hover-path: Highlights the path you'd do if you would leftclick.  
 
+For a video explanation of the configuration settings, and examples of correctly calculated edge cases, [click here](https://youtu.be/LYLhW6XlT7w).
+
 ![image](https://user-images.githubusercontent.com/52377234/183302759-365a8b06-7340-4c2b-8a9d-cf776cc1b7bf.png)  
 ### Config options:
 - Display: Always, While keybind pressed, Toggle on keybind, Never
