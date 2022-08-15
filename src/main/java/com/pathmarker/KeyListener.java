@@ -60,6 +60,9 @@ public class KeyListener implements net.runelite.client.input.KeyListener
             {
                 plugin.setKeyDisplayActivePath(false);
             }
+        }
+        if (config.displayKeybindHoverPath().matches(event))
+        {
             if (config.hoverPathDisplaySetting() == PathMarkerConfig.PathDisplaySetting.WHILE_KEY_PRESSED)
             {
                 plugin.setKeyDisplayHoverPath(false);
