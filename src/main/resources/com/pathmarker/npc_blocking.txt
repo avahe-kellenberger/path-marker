@@ -2,6 +2,10 @@
 692=1 // Bandit
 693=1 // Bandit
 694=1 // Bandit
+856=1 // Crusher
+857=1 // Crusher
+858=1 // Crusher
+859=1 // Crusher
 1368=1 // Elemental rock
 1496=1 // Boulder
 1734=1 // Brawler
@@ -17,12 +21,15 @@
 3534=1 // Drunken Ali
 3571=1 // Pile of bones
 3967=1 // Boulder
+4416=1 // Tree
 4463=1 // Calin
 4464=1 // Mihail
 4465=1 // Nicoleta
 4466=1 // Simona
 4502=1 // Boulder
 5055=1 // Stranger
+5247=1 // Trefaji
+5248=1 // Aberab
 5276=1 // Monkey Guard
 5277=1 // Elder Guard
 5278=1 // Elder Guard
@@ -38,3 +45,7 @@
 5995=1 // Silver Cog Secretary
 5996=1 // Brown Engine Secretary
 6482=1 // Boulder
+10690=1 // Rubble
+10692=1 // Rubble
+10694=1 // Rubble
+10696=1 // Rubble
