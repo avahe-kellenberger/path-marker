@@ -24,6 +24,7 @@
 3967=1 // Boulder
 4416=1 // Tree (Draynor)
 4417=1 // Tree (Draynor)
+4418=1 // Tree (Draynor)
 4463=1 // Calin
 4464=1 // Mihail
 4465=1 // Nicoleta
