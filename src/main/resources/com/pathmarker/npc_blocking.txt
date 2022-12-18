@@ -14,6 +14,7 @@
 1737=1 // Brawler
 1738=1 // Brawler
 2547=1 // Gianne jnr.
+3240=1 // Tree (Morytania)
 3445=1 // Guardian of Armadyl
 3446=1 // Guardian of Armadyl
 3448=1 // Fire Warrior of Lesarkus
@@ -21,7 +22,8 @@
 3534=1 // Drunken Ali
 3571=1 // Pile of bones
 3967=1 // Boulder
-4416=1 // Tree
+4416=1 // Tree (Draynor)
+4417=1 // Tree (Draynor)
 4463=1 // Calin
 4464=1 // Mihail
 4465=1 // Nicoleta
