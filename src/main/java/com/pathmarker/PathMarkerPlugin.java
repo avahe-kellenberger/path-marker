@@ -276,7 +276,7 @@ public class PathMarkerPlugin extends Plugin
             case CANCEL:
             case CC_OP:
             case CC_OP_LOW_PRIORITY:
-            case PLAYER_EIGTH_OPTION:
+            case PLAYER_EIGHTH_OPTION:
             case WIDGET_CLOSE:
             case WIDGET_CONTINUE:
             case WIDGET_FIRST_OPTION:
@@ -855,7 +855,7 @@ public class PathMarkerPlugin extends Plugin
     @Subscribe
     public void onVarbitChanged(VarbitChanged event)
     {
-        if (event.getIndex() == 173)
+        if (event.getVarpId() == 173)
         {
             // Run toggled
             int[] varps = client.getVarps();
@@ -874,7 +874,7 @@ public class PathMarkerPlugin extends Plugin
             case CANCEL:
             case CC_OP:
             case CC_OP_LOW_PRIORITY:
-            case PLAYER_EIGTH_OPTION:
+            case PLAYER_EIGHTH_OPTION:
             case WIDGET_CLOSE:
             case WIDGET_CONTINUE:
             case WIDGET_FIRST_OPTION:
