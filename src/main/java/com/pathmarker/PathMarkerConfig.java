@@ -60,6 +60,22 @@ public interface PathMarkerConfig extends Config
         return DrawMode.FULL_PATH;
     }
 
+    enum MarkerStyle
+    {
+        TILE,
+        DOT
+    }
+    @ConfigItem(
+            keyName = "activePathMarkerStyle",
+            name = "Marker Style",
+            description = "Shape of the path markers that are drawn",
+            section = activePathSection
+    )
+    default MarkerStyle activePathMarkerStyle()
+    {
+        return MarkerStyle.TILE;
+    }
+
     @Alpha
     @ConfigItem(
             keyName = "activePathColor1",
@@ -133,6 +149,17 @@ public interface PathMarkerConfig extends Config
     default DrawMode hoverPathDrawMode()
     {
         return DrawMode.FULL_PATH;
+    }
+
+    @ConfigItem(
+            keyName = "hoverPathMarkerStyle",
+            name = "Marker Style",
+            description = "Shape of the path markers that are drawn",
+            section = hoverPathSection
+    )
+    default MarkerStyle hoverPathMarkerStyle()
+    {
+        return MarkerStyle.TILE;
     }
 
     @Alpha

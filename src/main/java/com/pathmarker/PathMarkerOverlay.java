@@ -2,6 +2,7 @@ package com.pathmarker;
 
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
+import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.Overlay;
@@ -12,6 +13,7 @@ import net.runelite.client.ui.overlay.OverlayUtil;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 public class PathMarkerOverlay extends Overlay
 {
@@ -45,7 +47,15 @@ public class PathMarkerOverlay extends Overlay
                 {
                     if (config.hoverPathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
                     {
-                        renderTile(graphics, worldPoint, config.hoverPathColor1(), config.hoverPathColor1());
+                        switch( config.hoverPathMarkerStyle() )
+                        {
+                            case TILE:
+                                renderTile(graphics, worldPoint, config.hoverPathColor1(), config.hoverPathColor1());
+                                break;
+                            case DOT:
+                                renderDots(graphics, worldPoint, config.hoverPathColor1(), config.hoverPathColor1());
+                                break;
+                        }
                     }
                 }
             }
@@ -55,7 +65,15 @@ public class PathMarkerOverlay extends Overlay
                 {
                     if (config.hoverPathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
                     {
-                        renderTile(graphics, worldPoint, config.hoverPathColor2(), config.hoverPathColor2());
+                        switch( config.hoverPathMarkerStyle() )
+                        {
+                            case TILE:
+                                renderTile(graphics, worldPoint, config.hoverPathColor2(), config.hoverPathColor2());
+                                break;
+                            case DOT:
+                                renderDots(graphics, worldPoint, config.hoverPathColor2(), config.hoverPathColor2());
+                                break;
+                        }
                     }
                 }
             }
@@ -69,7 +87,15 @@ public class PathMarkerOverlay extends Overlay
                 {
                     if (config.activePathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
                     {
-                        renderTile(graphics, worldPoint, config.activePathColor1(), config.activePathColor1());
+                        switch( config.activePathMarkerStyle())
+                        {
+                            case TILE:
+                                renderTile(graphics, worldPoint, config.activePathColor1(), config.activePathColor1());
+                                break;
+                            case DOT:
+                                renderDots(graphics, worldPoint, config.activePathColor1(), config.activePathColor1());
+                                break;
+                        }
                     }
                 }
             }
@@ -79,7 +105,15 @@ public class PathMarkerOverlay extends Overlay
                 {
                     if (config.activePathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
                     {
-                        renderTile(graphics, worldPoint, config.activePathColor2(), config.activePathColor2());
+                        switch( config.activePathMarkerStyle())
+                        {
+                            case TILE:
+                                renderTile(graphics, worldPoint, config.activePathColor2(), config.activePathColor2());
+                                break;
+                            case DOT:
+                                renderDots(graphics, worldPoint, config.activePathColor2(), config.activePathColor2());
+                                break;
+                        }
                     }
                 }
             }
@@ -100,6 +134,26 @@ public class PathMarkerOverlay extends Overlay
         {
             return;
         }
+
         OverlayUtil.renderPolygon(graphics, poly, color, fillOpacity, stroke);
     }
+
+    private void renderDots(Graphics2D graphics, WorldPoint worldPoint, Color color, Color fillOpacity)
+    {
+        Stroke stroke = new BasicStroke(2);
+        LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
+        if (lp == null)
+        {
+            return;
+        }
+        final Point screenPoint = Perspective.localToCanvas(client, lp, 1);
+        final Ellipse2D dot = new Ellipse2D.Double( screenPoint.getX(), screenPoint.getY(), 8.0d, 8.0d );
+        if (dot == null)
+        {
+            return;
+        }
+
+        OverlayUtil.renderPolygon(graphics, dot, color, fillOpacity, stroke);
+    }
+
 }
