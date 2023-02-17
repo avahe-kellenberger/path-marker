@@ -11,8 +11,11 @@ For a video explanation of the configuration settings, and examples of correctly
 - Draw location(s): Game map, Minimap, Both
 - Draw mode: Full path, Target tile
 - Keybind: sets the keybind for the Display setting
-- Main tile color: the color of the path's tiles you're going to visit
-- Secondary tile color: the color of the path's tiles you're going to "skip" due to running over them
+- Marker Style: Whether to render the path markers as tiles or as dots (as in RS3)
+- Main fill color: the fill color of the markers on the path's tiles you're going to visit
+- Main outline color: the color of the outline of the markers on the path's tiles you're going to visit
+- Secondary fill color: the fill color of the markers on the path's tiles you're going to "skip" due to running over them
+- Secondary outline color: the color of the outline of the markers on the path's tiles you're going to "skip" due to running over them
 - Draw only if no active path: stops the hover-path from being drawn if there's an active path visible
 ### Known issues:
 - Paths cannot be calculated to outside the currently loaded area, as the server hasn't sent the data of tht area yet.
