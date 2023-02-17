@@ -50,10 +50,10 @@ public class PathMarkerOverlay extends Overlay
                         switch( config.hoverPathMarkerStyle() )
                         {
                             case TILE:
-                                renderTile(graphics, worldPoint, config.hoverPathColor1(), config.hoverPathColor1());
+                                renderTile(graphics, worldPoint, config.hoverPathStroke1(), config.hoverPathFill1());
                                 break;
                             case DOT:
-                                renderDots(graphics, worldPoint, config.hoverPathColor1(), config.hoverPathColor1());
+                                renderDots(graphics, worldPoint, config.hoverPathStroke1(), config.hoverPathFill1());
                                 break;
                         }
                     }
@@ -68,10 +68,10 @@ public class PathMarkerOverlay extends Overlay
                         switch( config.hoverPathMarkerStyle() )
                         {
                             case TILE:
-                                renderTile(graphics, worldPoint, config.hoverPathColor2(), config.hoverPathColor2());
+                                renderTile(graphics, worldPoint, config.hoverPathStroke2(), config.hoverPathFill2());
                                 break;
                             case DOT:
-                                renderDots(graphics, worldPoint, config.hoverPathColor2(), config.hoverPathColor2());
+                                renderDots(graphics, worldPoint, config.hoverPathStroke2(), config.hoverPathFill2());
                                 break;
                         }
                     }
@@ -90,10 +90,10 @@ public class PathMarkerOverlay extends Overlay
                         switch( config.activePathMarkerStyle())
                         {
                             case TILE:
-                                renderTile(graphics, worldPoint, config.activePathColor1(), config.activePathColor1());
+                                renderTile(graphics, worldPoint, config.activePathStroke1(), config.activePathFill1());
                                 break;
                             case DOT:
-                                renderDots(graphics, worldPoint, config.activePathColor1(), config.activePathColor1());
+                                renderDots(graphics, worldPoint, config.activePathStroke1(), config.activePathFill1());
                                 break;
                         }
                     }
@@ -108,10 +108,10 @@ public class PathMarkerOverlay extends Overlay
                         switch( config.activePathMarkerStyle())
                         {
                             case TILE:
-                                renderTile(graphics, worldPoint, config.activePathColor2(), config.activePathColor2());
+                                renderTile(graphics, worldPoint, config.activePathStroke2(), config.activePathFill2());
                                 break;
                             case DOT:
-                                renderDots(graphics, worldPoint, config.activePathColor2(), config.activePathColor2());
+                                renderDots(graphics, worldPoint, config.activePathStroke2(), config.activePathFill2());
                                 break;
                         }
                     }
@@ -121,7 +121,7 @@ public class PathMarkerOverlay extends Overlay
         return null;
     }
 
-    private void renderTile(Graphics2D graphics, WorldPoint worldPoint, Color color, Color fillOpacity)
+    private void renderTile(Graphics2D graphics, WorldPoint worldPoint, Color stroke_color, Color fill_color)
     {
         Stroke stroke = new BasicStroke(1);
         LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
@@ -135,10 +135,10 @@ public class PathMarkerOverlay extends Overlay
             return;
         }
 
-        OverlayUtil.renderPolygon(graphics, poly, color, fillOpacity, stroke);
+        OverlayUtil.renderPolygon(graphics, poly, stroke_color, fill_color, stroke);
     }
 
-    private void renderDots(Graphics2D graphics, WorldPoint worldPoint, Color color, Color fillOpacity)
+    private void renderDots(Graphics2D graphics, WorldPoint worldPoint, Color stroke_color, Color fill_color)
     {
         Stroke stroke = new BasicStroke(2);
         LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
@@ -153,7 +153,7 @@ public class PathMarkerOverlay extends Overlay
             return;
         }
 
-        OverlayUtil.renderPolygon(graphics, dot, color, fillOpacity, stroke);
+        OverlayUtil.renderPolygon(graphics, dot, stroke_color, fill_color, stroke);
     }
 
 }

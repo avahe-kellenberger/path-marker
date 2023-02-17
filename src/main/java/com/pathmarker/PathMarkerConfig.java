@@ -78,24 +78,48 @@ public interface PathMarkerConfig extends Config
 
     @Alpha
     @ConfigItem(
-            keyName = "activePathColor1",
-            name = "Main tile color",
-            description = "The main color of your active path",
+            keyName = "activePathStroke1",
+            name = "Main outline color",
+            description = "The main outline color of your active path",
             section = activePathSection
     )
-    default Color activePathColor1()
+    default Color activePathStroke1()
+    {
+        return new Color(255,0,0,255);
+    }
+
+    @Alpha
+    @ConfigItem(
+            keyName = "activePathFill1",
+            name = "Main fill color",
+            description = "The main fill color of your active path",
+            section = activePathSection
+    )
+    default Color activePathFill1()
     {
         return new Color(255,0,0,50);
     }
 
     @Alpha
     @ConfigItem(
-            keyName = "activePathColor2",
-            name = "Secondary tile color",
-            description = "The secondary color of your active path, indicating the tiles you 'skip' while running.",
+            keyName = "activePathStroke2",
+            name = "Secondary outline color",
+            description = "The secondary outline color of your active path, indicating the tiles you 'skip' while running.",
             section = activePathSection
     )
-    default Color activePathColor2()
+    default Color activePathStroke2()
+    {
+        return new Color(255,255,0,255);
+    }
+
+    @Alpha
+    @ConfigItem(
+            keyName = "activePathFill2",
+            name = "Secondary fill color",
+            description = "The secondary fill color of your active path, indicating the tiles you 'skip' while running.",
+            section = activePathSection
+    )
+    default Color activePathFill2()
     {
         return new Color(255,255,0,50);
     }
@@ -164,26 +188,50 @@ public interface PathMarkerConfig extends Config
 
     @Alpha
     @ConfigItem(
-            keyName = "hoverPathColor1",
-            name = "Main tile color",
-            description = "The main color of the hover-path",
+            keyName = "hoverPathStroke1",
+            name = "Main outline color",
+            description = "The main outline color of the hover-path",
             section = hoverPathSection
     )
-    default Color hoverPathColor1()
+    default Color hoverPathStroke1()
     {
-        return new Color(255,0,255,50);
+        return new Color(255,0,255,255);
     }
 
     @Alpha
     @ConfigItem(
-            keyName = "hoverPathColor2",
-            name = "Secondary tile color",
-            description = "The secondary color of the hover-path, indicating the tiles you 'skip' while running.",
+            keyName = "hoverPathFill1",
+            name = "Main fill color",
+            description = "The main fill color of the hover-path",
             section = hoverPathSection
     )
-    default Color hoverPathColor2()
+    default Color hoverPathFill1()
     {
-        return new Color(0,1,0,0.2f);
+        return new Color(255,0,255,255);
+    }
+
+    @Alpha
+    @ConfigItem(
+            keyName = "hoverPathStroke2",
+            name = "Secondary outline color",
+            description = "The secondary outline color of the hover-path, indicating the tiles you 'skip' while running.",
+            section = hoverPathSection
+    )
+    default Color hoverPathStroke2()
+    {
+        return new Color(0,255,0,255);
+    }
+
+    @Alpha
+    @ConfigItem(
+            keyName = "hoverPathFill2",
+            name = "Secondary fill color",
+            description = "The secondary fill color of the hover-path, indicating the tiles you 'skip' while running.",
+            section = hoverPathSection
+    )
+    default Color hoverPathFill2()
+    {
+        return new Color(0,255,0,50);
     }
 
     @ConfigItem(
