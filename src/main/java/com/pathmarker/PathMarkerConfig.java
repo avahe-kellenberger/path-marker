@@ -207,7 +207,7 @@ public interface PathMarkerConfig extends Config
     )
     default Color hoverPathFill1()
     {
-        return new Color(255,0,255,255);
+        return new Color(255,0,255,50);
     }
 
     @Alpha
