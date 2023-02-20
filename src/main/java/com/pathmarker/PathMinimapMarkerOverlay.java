@@ -73,7 +73,7 @@ public class PathMinimapMarkerOverlay extends Overlay
                 {
                     if (config.hoverPathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
                     {
-                        renderMinimapTile(graphics, worldPoint, config.hoverPathColor1(), minimapPoint);
+                        renderMinimapTile(graphics, worldPoint, config.hoverPathFill1(), minimapPoint);
                     }
                 }
             }
@@ -83,7 +83,7 @@ public class PathMinimapMarkerOverlay extends Overlay
                 {
                     if (config.hoverPathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getHoverPathTiles().get(plugin.getHoverPathTiles().size() - 1))
                     {
-                        renderMinimapTile(graphics, worldPoint, config.hoverPathColor2(), minimapPoint);
+                        renderMinimapTile(graphics, worldPoint, config.hoverPathFill2(), minimapPoint);
                     }
                 }
             }
@@ -97,7 +97,7 @@ public class PathMinimapMarkerOverlay extends Overlay
                 {
                     if (config.activePathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
                     {
-                        renderMinimapTile(graphics, worldPoint, config.activePathColor1(), minimapPoint);
+                        renderMinimapTile(graphics, worldPoint, config.activePathFill1(), minimapPoint);
                     }
                 }
             }
@@ -107,7 +107,7 @@ public class PathMinimapMarkerOverlay extends Overlay
                 {
                     if (config.activePathDrawMode() == PathMarkerConfig.DrawMode.FULL_PATH || worldPoint == plugin.getActivePathTiles().get(plugin.getActivePathTiles().size() - 1))
                     {
-                        renderMinimapTile(graphics, worldPoint, config.activePathColor2(), minimapPoint);
+                        renderMinimapTile(graphics, worldPoint, config.activePathFill2(), minimapPoint);
                     }
                 }
             }
