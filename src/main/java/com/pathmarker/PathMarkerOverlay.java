@@ -146,7 +146,7 @@ public class PathMarkerOverlay extends Overlay
         {
             return;
         }
-        final Point screenPoint = Perspective.localToCanvas(client, lp, 1);
+        final Point screenPoint = Perspective.localToCanvas(client, lp, 0);
         final Ellipse2D dot = new Ellipse2D.Double( screenPoint.getX(), screenPoint.getY(), 8.0d, 8.0d );
         if (dot == null)
         {
