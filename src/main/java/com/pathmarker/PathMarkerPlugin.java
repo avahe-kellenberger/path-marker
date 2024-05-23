@@ -28,6 +28,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @PluginDescriptor(
         name = "Path Marker",
@@ -152,22 +154,14 @@ public class PathMarkerPlugin extends Plugin
 
     private static Map<Integer, Integer> npcBlocking;
 
-	/*private final int[][] directions = new int[128][128];
-
-	private final int[][] distances = new int[128][128];
-
-	private final int[] bufferX = new int[4096];
-
-	private final int[] bufferY = new int[4096];*/
-
     static class PathDestination
     {
-        private WorldPoint worldPoint;
-        private int sizeX;
-        private int sizeY;
+        private final WorldPoint worldPoint;
+        private final int sizeX;
+        private final int sizeY;
         private int objConfig;
-        private int objID;
-        private Actor actor;
+        private final int objID;
+        private final Actor actor;
 
         public PathDestination(WorldPoint worldPoint, int sizeX, int sizeY, int objConfig, int objID)
         {
@@ -192,8 +186,7 @@ public class PathMarkerPlugin extends Plugin
     private PathDestination activePathDestination;
 
     @Override
-    protected void startUp() throws Exception
-    {
+    protected void startUp() {
         hoverPathTiles = new ArrayList<>();
         hoverMiddlePathTiles = new ArrayList<>();
         hoverCheckpointWPs = new ArrayList<>();
@@ -218,8 +211,7 @@ public class PathMarkerPlugin extends Plugin
     }
 
     @Override
-    protected void shutDown() throws Exception
-    {
+    protected void shutDown() {
         overlayManager.remove(overlay);
         overlayManager.remove(minimapOverlay);
         keyManager.unregisterKeyListener(keyListener);
@@ -289,7 +281,6 @@ public class PathMarkerPlugin extends Plugin
             case WIDGET_TYPE_1:
             case WIDGET_TYPE_4:
             case WIDGET_TYPE_5:
-            case WIDGET_USE_ON_ITEM:
             case RUNELITE:
             case RUNELITE_HIGH_PRIORITY:
             case RUNELITE_INFOBOX:
@@ -384,12 +375,12 @@ public class PathMarkerPlugin extends Plugin
             case WALK:
             default:
             {
-                Tile selectedSceneTile = client.getSelectedSceneTile();
+                Tile selectedSceneTile = client.getLocalPlayer().getWorldView().getSelectedSceneTile();
                 if (selectedSceneTile == null)
                 {
                     return null;
                 }
-                return pathfinder.pathTo(client.getSelectedSceneTile());
+                return pathfinder.pathTo(client.getLocalPlayer().getWorldView().getSelectedSceneTile());
             }
         }
     }
@@ -421,10 +412,10 @@ public class PathMarkerPlugin extends Plugin
             int dx = Integer.signum(cpTileWP.getX() - currentWA.getX());
             int dy = Integer.signum(cpTileWP.getY() - currentWA.getY());
             WorldArea finalCurrentWA = currentWA;
-            boolean movementCheck = currentWA.canTravelInDirection(client, dx, dy, (worldPoint -> {
-                WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getPlane());
-                WorldPoint worldPoint2 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getPlane());
-                WorldPoint worldPoint3 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY() + dy, client.getPlane());
+            boolean movementCheck = currentWA.canTravelInDirection(client.getTopLevelWorldView(), dx, dy, (worldPoint -> {
+                WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getLocalPlayer().getWorldView().getPlane());
+                WorldPoint worldPoint2 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getLocalPlayer().getWorldView().getPlane());
+                WorldPoint worldPoint3 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY() + dy, client.getLocalPlayer().getWorldView().getPlane());
                 for (WorldArea worldArea : npcBlockWAs)
                 {
                     if (worldArea.contains(worldPoint1) || worldArea.contains(worldPoint2) || worldArea.contains(worldPoint3))
@@ -436,7 +427,7 @@ public class PathMarkerPlugin extends Plugin
             }));
             if (movementCheck)
             {
-                currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY() + dy, 1, 1, client.getPlane());
+                currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY() + dy, 1, 1, client.getLocalPlayer().getWorldView().getPlane());
                 if (currentWA.toWorldPoint().equals(checkpointWPs.get(checkpointWPs.size() - 1)) || !pathFound)
                 {
                     pathTiles.add(currentWA.toWorldPoint());
@@ -452,10 +443,10 @@ public class PathMarkerPlugin extends Plugin
                 runSkip = !runSkip;
                 continue;
             }
-            movementCheck = currentWA.canTravelInDirection(client, dx, 0, (worldPoint -> {
+            movementCheck = currentWA.canTravelInDirection(client.getTopLevelWorldView(), dx, 0, (worldPoint -> {
                 for (WorldArea worldArea : npcBlockWAs)
                 {
-                    WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getPlane());
+                    WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getLocalPlayer().getWorldView().getPlane());
                     if (worldArea.contains(worldPoint1))
                     {
                         return false;
@@ -465,7 +456,7 @@ public class PathMarkerPlugin extends Plugin
             }));
             if (dx != 0 && movementCheck)
             {
-                currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY(), 1, 1, client.getPlane());
+                currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY(), 1, 1, client.getLocalPlayer().getWorldView().getPlane());
                 if (currentWA.toWorldPoint().equals(checkpointWPs.get(checkpointWPs.size() - 1)) || !pathFound)
                 {
                     pathTiles.add(currentWA.toWorldPoint());
@@ -481,10 +472,10 @@ public class PathMarkerPlugin extends Plugin
                 runSkip = !runSkip;
                 continue;
             }
-            movementCheck = currentWA.canTravelInDirection(client, 0, dy, (worldPoint -> {
+            movementCheck = currentWA.canTravelInDirection(client.getTopLevelWorldView(), 0, dy, (worldPoint -> {
                 for (WorldArea worldArea : npcBlockWAs)
                 {
-                    WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getPlane());
+                    WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getLocalPlayer().getWorldView().getPlane());
                     if (worldArea.contains(worldPoint1))
                     {
                         return false;
@@ -494,7 +485,7 @@ public class PathMarkerPlugin extends Plugin
             }));
             if (dy != 0 && movementCheck)
             {
-                currentWA = new WorldArea(currentWA.getX(), currentWA.getY() + dy, 1, 1, client.getPlane());
+                currentWA = new WorldArea(currentWA.getX(), currentWA.getY() + dy, 1, 1, client.getLocalPlayer().getWorldView().getPlane());
                 if (currentWA.toWorldPoint().equals(checkpointWPs.get(checkpointWPs.size() - 1)) || !pathFound)
                 {
                     pathTiles.add(currentWA.toWorldPoint());
@@ -520,7 +511,7 @@ public class PathMarkerPlugin extends Plugin
         {
             return;
         }
-        WorldArea currentWA = new WorldArea(lastTickWorldLocation.getX(), lastTickWorldLocation.getY(), 1,1, client.getPlane());
+        WorldArea currentWA = new WorldArea(lastTickWorldLocation.getX(), lastTickWorldLocation.getY(), 1,1, client.getLocalPlayer().getWorldView().getPlane());
         if (activeCheckpointWPs == null)
         {
             return;
@@ -547,10 +538,10 @@ public class PathMarkerPlugin extends Plugin
             int dx = Integer.signum(cpTileWP.getX() - currentWA.getX());
             int dy = Integer.signum(cpTileWP.getY() - currentWA.getY());
             WorldArea finalCurrentWA = currentWA;
-            boolean movementCheck = currentWA.canTravelInDirection(client, dx, dy, (worldPoint -> {
-                WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getPlane());
-                WorldPoint worldPoint2 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getPlane());
-                WorldPoint worldPoint3 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY() + dy, client.getPlane());
+            boolean movementCheck = currentWA.canTravelInDirection(client.getTopLevelWorldView(), dx, dy, (worldPoint -> {
+                WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getLocalPlayer().getWorldView().getPlane());
+                WorldPoint worldPoint2 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getLocalPlayer().getWorldView().getPlane());
+                WorldPoint worldPoint3 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY() + dy, client.getLocalPlayer().getWorldView().getPlane());
                 for (WorldArea worldArea : npcBlockWAs)
                 {
                     if (worldArea.contains(worldPoint1) || worldArea.contains(worldPoint2) || worldArea.contains(worldPoint3))
@@ -562,12 +553,12 @@ public class PathMarkerPlugin extends Plugin
             }));
             if (movementCheck)
             {
-                currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY() + dy, 1, 1, client.getPlane());
+                currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY() + dy, 1, 1, client.getLocalPlayer().getWorldView().getPlane());
             }
             else
             {
-                movementCheck = currentWA.canTravelInDirection(client, dx, 0, (worldPoint -> {
-                    WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getPlane());
+                movementCheck = currentWA.canTravelInDirection(client.getTopLevelWorldView(), dx, 0, (worldPoint -> {
+                    WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX() + dx, finalCurrentWA.getY(), client.getLocalPlayer().getWorldView().getPlane());
                     for (WorldArea worldArea : npcBlockWAs)
                     {
                         if (worldArea.contains(worldPoint1))
@@ -579,12 +570,12 @@ public class PathMarkerPlugin extends Plugin
                 }));
                 if (dx != 0 && movementCheck)
                 {
-                    currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY(), 1, 1, client.getPlane());
+                    currentWA = new WorldArea(currentWA.getX() + dx, currentWA.getY(), 1, 1, client.getLocalPlayer().getWorldView().getPlane());
                 }
                 else
                 {
-                    movementCheck = currentWA.canTravelInDirection(client, 0, dy, (worldPoint -> {
-                        WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getPlane());
+                    movementCheck = currentWA.canTravelInDirection(client.getTopLevelWorldView(), 0, dy, (worldPoint -> {
+                        WorldPoint worldPoint1 = new WorldPoint(finalCurrentWA.getX(), finalCurrentWA.getY() + dy, client.getLocalPlayer().getWorldView().getPlane());
                         for (WorldArea worldArea : npcBlockWAs)
                         {
                             if (worldArea.contains(worldPoint1))
@@ -596,7 +587,7 @@ public class PathMarkerPlugin extends Plugin
                     }));
                     if (dy != 0 && movementCheck)
                     {
-                        currentWA = new WorldArea(currentWA.getX(), currentWA.getY() + dy, 1, 1, client.getPlane());
+                        currentWA = new WorldArea(currentWA.getX(), currentWA.getY() + dy, 1, 1, client.getLocalPlayer().getWorldView().getPlane());
                     }
                 }
             }
@@ -620,7 +611,7 @@ public class PathMarkerPlugin extends Plugin
         {
             if (activePathStartedLastTick)
             {
-                LocalPoint localPoint = LocalPoint.fromWorld(client, activePathDestination.worldPoint);
+                LocalPoint localPoint = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), activePathDestination.worldPoint);
                 if (localPoint != null)
                 {
                     Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
@@ -661,7 +652,9 @@ public class PathMarkerPlugin extends Plugin
 
     private void updateNpcBlockings()
     {
-        List<NPC> npcs = client.getNpcs();
+        List<NPC> npcs = client.getLocalPlayer().getWorldView().npcs()
+                .stream()
+                .collect(Collectors.toCollection(ArrayList::new));
         npcBlockWAs.clear();
         for (NPC npc : npcs)
         {
@@ -702,9 +695,9 @@ public class PathMarkerPlugin extends Plugin
 
     TileItem findTileItem(int x, int y, int id)
     {
-        Scene scene = client.getScene();
+        Scene scene = client.getLocalPlayer().getWorldView().getScene();
         Tile[][][] tiles = scene.getTiles();
-        Tile tile = tiles[client.getPlane()][x][y];
+        Tile tile = tiles[client.getLocalPlayer().getWorldView().getPlane()][x][y];
         if (tile == null)
         {
             return null;
@@ -726,9 +719,9 @@ public class PathMarkerPlugin extends Plugin
 
     TileObject findTileObject(int x, int y, int id)
     {
-        Scene scene = client.getScene();
+        Scene scene = client.getLocalPlayer().getWorldView().getScene();
         Tile[][][] tiles = scene.getTiles();
-        Tile tile = tiles[client.getPlane()][x][y];
+        Tile tile = tiles[client.getLocalPlayer().getWorldView().getPlane()][x][y];
         if (tile != null)
         {
             for (GameObject gameObject : tile.getGameObjects())
@@ -815,16 +808,16 @@ public class PathMarkerPlugin extends Plugin
         {
             if (client.getVarbitValue(Varbits.SIDE_PANELS) == 1)
             {
-                minimapDrawWidget = client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_DRAW_AREA);
+                minimapDrawWidget = client.getWidget(ComponentID.RESIZABLE_VIEWPORT_BOTTOM_LINE_MINIMAP_DRAW_AREA);
             }
             else
             {
-                minimapDrawWidget = client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_STONES_DRAW_AREA);
+                minimapDrawWidget = client.getWidget(ComponentID.RESIZABLE_VIEWPORT_MINIMAP_DRAW_AREA);
             }
         }
         else
         {
-            minimapDrawWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_MINIMAP_DRAW_AREA);
+            minimapDrawWidget = client.getWidget(ComponentID.FIXED_VIEWPORT_MINIMAP_DRAW_AREA);
         }
 
         if (minimapDrawWidget == null || minimapDrawWidget.isHidden())
@@ -837,7 +830,7 @@ public class PathMarkerPlugin extends Plugin
         }
         int widgetX = lastMouseCanvasPosition.getX() - minimapDrawWidget.getCanvasLocation().getX() - minimapDrawWidget.getWidth()/2;
         int widgetY = lastMouseCanvasPosition.getY() - minimapDrawWidget.getCanvasLocation().getY() - minimapDrawWidget.getHeight()/2;
-        int angle = client.getMapAngle() & 0x7FF;
+        int angle = client.getCameraYawTarget() & 0x7FF;
         int sine = (int) (65536.0D * Math.sin((double) angle * 0.0030679615D));
         int cosine = (int) (65536.0D * Math.cos((double) angle * 0.0030679615D));
         int xx = cosine * widgetX + widgetY * sine >> 11;
@@ -887,7 +880,6 @@ public class PathMarkerPlugin extends Plugin
             case WIDGET_TYPE_1:
             case WIDGET_TYPE_4:
             case WIDGET_TYPE_5:
-            case WIDGET_USE_ON_ITEM:
             case RUNELITE:
             case RUNELITE_HIGH_PRIORITY:
             case RUNELITE_INFOBOX:
@@ -946,7 +938,7 @@ public class PathMarkerPlugin extends Plugin
                         config = groundObject.getConfig();
                     }
                 }
-                WorldPoint worldPoint = WorldPoint.fromScene(client, x, y, client.getPlane());
+                WorldPoint worldPoint = WorldPoint.fromScene(client.getLocalPlayer().getWorldView(), x, y, client.getLocalPlayer().getWorldView().getPlane());
                 Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(x, y, sizeX, sizeY, config, id);
                 activePathDestination = new PathDestination(worldPoint, sizeX, sizeY, config, id);
                 if (pathResult == null)
@@ -983,7 +975,7 @@ public class PathMarkerPlugin extends Plugin
                     return;
                 }
                 isRunning = willRunOnClick();
-                LocalPoint localPoint = LocalPoint.fromWorld(client, actor.getWorldLocation());
+                LocalPoint localPoint = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), actor.getWorldLocation());
                 if (localPoint == null)
                 {
                     return;
@@ -995,7 +987,7 @@ public class PathMarkerPlugin extends Plugin
                 {
                     size = ((NPC) actor).getComposition().getSize();
                 }
-                WorldPoint worldPoint = WorldPoint.fromScene(client, x, y, client.getPlane());
+                WorldPoint worldPoint = WorldPoint.fromScene(client.getLocalPlayer().getWorldView(), x, y, client.getLocalPlayer().getWorldView().getPlane());
                 Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(x, y, size, size, -2, -1);
                 activePathDestination = new PathDestination(worldPoint, size, size, -2, -1, actor);
                 if (pathResult == null)
@@ -1024,7 +1016,7 @@ public class PathMarkerPlugin extends Plugin
                     return;
                 }
                 isRunning = willRunOnClick();
-                WorldPoint worldPoint = WorldPoint.fromScene(client, oldSelectedSceneTile.getSceneLocation().getX(), oldSelectedSceneTile.getSceneLocation().getY(), client.getPlane());
+                WorldPoint worldPoint = WorldPoint.fromScene(client.getLocalPlayer().getWorldView(), oldSelectedSceneTile.getSceneLocation().getX(), oldSelectedSceneTile.getSceneLocation().getY(), client.getLocalPlayer().getWorldView().getPlane());
                 Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(oldSelectedSceneTile);
                 activePathDestination = new PathDestination(worldPoint, 1, 1, -1, -1);
                 if (pathResult == null)
@@ -1051,22 +1043,22 @@ public class PathMarkerPlugin extends Plugin
             case LOGGING_IN:
             {
                 activeCheckpointWPs.clear();
-                activeCheckpointWPs.add(new WorldPoint(0,0,client.getPlane()));
+                activeCheckpointWPs.add(new WorldPoint(0,0,client.getLocalPlayer().getWorldView().getPlane()));
                 pathActive = false;
             }
         }
     }
 
     @Subscribe
-    public void onClientTick(ClientTick event)
+    public void onClientTick()
     {
         if (calcTilePathOnNextClientTick)
         {
-            Tile selectedSceneTile = client.getSelectedSceneTile();
+            Tile selectedSceneTile = client.getLocalPlayer().getWorldView().getSelectedSceneTile();
             if (selectedSceneTile != null)
             {
                 isRunning = willRunOnClick();
-                WorldPoint worldPoint = WorldPoint.fromScene(client, selectedSceneTile.getSceneLocation().getX(), selectedSceneTile.getSceneLocation().getY(), client.getPlane());
+                WorldPoint worldPoint = WorldPoint.fromScene(client.getLocalPlayer().getWorldView(), selectedSceneTile.getSceneLocation().getX(), selectedSceneTile.getSceneLocation().getY(), client.getLocalPlayer().getWorldView().getPlane());
                 Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(selectedSceneTile);
                 activePathDestination = new PathDestination(worldPoint, 1, 1, -1, -1);
                 if (pathResult != null)
@@ -1081,7 +1073,7 @@ public class PathMarkerPlugin extends Plugin
                 }
             }
         }
-        Tile selectedSceneTile = client.getSelectedSceneTile();
+        Tile selectedSceneTile = client.getLocalPlayer().getWorldView().getSelectedSceneTile();
         MenuEntry[] menuEntries = client.getMenuEntries();
         if (menuEntries.length == 1 && !client.isMenuOpen()
             && (leftClicked || (config.hoverPathDisplaySetting() != PathMarkerConfig.PathDisplaySetting.NEVER)))
@@ -1102,7 +1094,7 @@ public class PathMarkerPlugin extends Plugin
                     if (leftClicked)
                     {
                         isRunning = willRunOnClick();
-                        activePathDestination = new PathDestination(WorldPoint.fromScene(client, point.getX(), point.getY(), client.getPlane()), 1, 1, -1, -1);
+                        activePathDestination = new PathDestination(WorldPoint.fromScene(client.getLocalPlayer().getWorldView(), point.getX(), point.getY(), client.getLocalPlayer().getWorldView().getPlane()), 1, 1, -1, -1);
                         lastTickWorldLocation = client.getLocalPlayer().getWorldLocation();
                         pathActive = true;
                         activeCheckpointWPs = new ArrayList<>(pathResult.getLeft());
@@ -1131,7 +1123,7 @@ public class PathMarkerPlugin extends Plugin
                 }
             }
         }
-        oldSelectedSceneTile = client.getSelectedSceneTile();
+        oldSelectedSceneTile = client.getLocalPlayer().getWorldView().getSelectedSceneTile();
         oldMenuEntries = menuEntries;
         leftClicked = false;
         lastMouseCanvasPosition=client.getMouseCanvasPosition();
@@ -1165,7 +1157,7 @@ public class PathMarkerPlugin extends Plugin
     }
 
     @Subscribe
-    public void onGameTick(GameTick event)
+    public void onGameTick()
     {
         LocalPoint localDestinationLocation = client.getLocalDestinationLocation();
         if (localDestinationLocation != null && pathActive && activePathFound)
@@ -1206,16 +1198,19 @@ public class PathMarkerPlugin extends Plugin
         if (pathActive && activePathDestination.objConfig == -2 && activeCheckpointWPs.size()<2)
         {
             // Path is recalculated when there's <2 checkpoint tiles remaining when pathing to a NPC/player
-            LocalPoint localPoint = LocalPoint.fromWorld(client, activePathDestination.actor.getWorldLocation());
-            if (localPoint != null)
-            {
-                Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
-                if (pathResult != null)
+            Actor actor = activePathDestination.actor;
+            if (actor != null) {
+                LocalPoint localPoint = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), actor.getWorldLocation());
+                if (localPoint != null)
                 {
-                    pathActive = true;
-                    activeCheckpointWPs = pathResult.getLeft();
-                    activePathFound = pathResult.getRight();
-                    activePathStartedLastTick = false;
+                    Pair<List<WorldPoint>, Boolean> pathResult = pathfinder.pathTo(localPoint.getSceneX(), localPoint.getSceneY(), activePathDestination.sizeX, activePathDestination.sizeY, activePathDestination.objConfig, activePathDestination.objID);
+                    if (pathResult != null)
+                    {
+                        pathActive = true;
+                        activeCheckpointWPs = pathResult.getLeft();
+                        activePathFound = pathResult.getRight();
+                        activePathStartedLastTick = false;
+                    }
                 }
             }
         }
