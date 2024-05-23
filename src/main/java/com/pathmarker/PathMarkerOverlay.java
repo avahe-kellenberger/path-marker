@@ -20,7 +20,7 @@ public class PathMarkerOverlay extends Overlay
     private final PathMarkerPlugin plugin;
 
     @Inject
-    private final PathMarkerConfig config;
+    private PathMarkerConfig config;
 
     @Inject
     private PathMarkerOverlay(Client client, PathMarkerConfig config, PathMarkerPlugin plugin)

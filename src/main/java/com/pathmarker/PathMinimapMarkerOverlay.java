@@ -20,7 +20,7 @@ public class PathMinimapMarkerOverlay extends Overlay
     private final PathMarkerPlugin plugin;
 
     @Inject
-    private final PathMarkerConfig config;
+    private PathMarkerConfig config;
 
     @Inject
     private PathMinimapMarkerOverlay(Client client, PathMarkerConfig config, PathMarkerPlugin plugin)
