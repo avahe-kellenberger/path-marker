@@ -1050,7 +1050,7 @@ public class PathMarkerPlugin extends Plugin
     }
 
     @Subscribe
-    public void onClientTick()
+    public void onClientTick(ClientTick event)
     {
         if (calcTilePathOnNextClientTick)
         {
@@ -1157,7 +1157,7 @@ public class PathMarkerPlugin extends Plugin
     }
 
     @Subscribe
-    public void onGameTick()
+    public void onGameTick(GameTick event)
     {
         LocalPoint localDestinationLocation = client.getLocalDestinationLocation();
         if (localDestinationLocation != null && pathActive && activePathFound)
