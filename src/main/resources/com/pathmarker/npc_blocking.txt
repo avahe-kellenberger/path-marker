@@ -6,6 +6,7 @@
 857=1 // Crusher
 858=1 // Crusher
 859=1 // Crusher
+995=1 // Guard (HAM, during Death to the Dorgeshuun)
 1368=1 // Elemental rock
 1496=1 // Boulder
 1734=1 // Brawler
@@ -14,10 +15,17 @@
 1737=1 // Brawler
 1738=1 // Brawler
 2547=1 // Gianne jnr.
+2852=1 // Fly trap
+2900=1 // Elsie
+3100=1 // Sir Renitee
 3240=1 // Tree (Morytania)
 3445=1 // Guardian of Armadyl
 3446=1 // Guardian of Armadyl
 3448=1 // Fire Warrior of Lesarkus
+3473=1 // The Inadequacy (quest version)
+3474=1 // The Everlasting (quest version)
+3475=1 // The Untouchable (quest version)
+3476=1 // The Illusive (quest version)
 3499=1 // Crate
 3534=1 // Drunken Ali
 3571=1 // Pile of bones
@@ -31,6 +39,7 @@
 4466=1 // Simona
 4502=1 // Boulder
 5055=1 // Stranger
+5129=1 // Glod (quest version)
 5247=1 // Trefaji
 5248=1 // Aberab
 5276=1 // Monkey Guard
@@ -48,7 +57,13 @@
 5995=1 // Silver Cog Secretary
 5996=1 // Brown Engine Secretary
 6482=1 // Boulder
+8998=1 // Iban
+10599=1 // Cannoneer
+10600=1 // Cannoneer
+10601=1 // Cannoneer
+10602=1 // Cannoneer
 10690=1 // Rubble
 10692=1 // Rubble
 10694=1 // Rubble
 10696=1 // Rubble
+11225=1 // D3ad1i F15her
