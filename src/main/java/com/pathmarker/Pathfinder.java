@@ -16,8 +16,6 @@ public class Pathfinder
 {
     private final Client client;
 
-    private final PathMarkerConfig config;
-
     private final PathMarkerPlugin plugin;
 
     private final int[][] directions = new int[128][128];
@@ -28,10 +26,9 @@ public class Pathfinder
 
     private final int[] bufferY = new int[4096];
 
-    public Pathfinder(Client client, PathMarkerConfig config, PathMarkerPlugin plugin)
+    public Pathfinder(Client client, PathMarkerPlugin plugin)
     {
         this.client = client;
-        this.config = config;
         this.plugin = plugin;
     }
 
@@ -42,9 +39,9 @@ public class Pathfinder
         {
             return null;
         }
-        int z = client.getPlane();
+        int z = client.getLocalPlayer().getWorldView().getPlane();
 
-        CollisionData[] collisionData = client.getCollisionMaps();
+        CollisionData[] collisionData = client.getLocalPlayer().getWorldView().getCollisionMaps();
         if (collisionData == null)
         {
             return null;
@@ -59,7 +56,7 @@ public class Pathfinder
                 distances[i][j] = Integer.MAX_VALUE;
             }
         }
-        LocalPoint playerTrueTileLocalPoint = LocalPoint.fromWorld(client, player.getWorldLocation());
+        LocalPoint playerTrueTileLocalPoint = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), player.getWorldLocation());
         if (playerTrueTileLocalPoint == null)
         {
             return null;
@@ -267,7 +264,7 @@ public class Pathfinder
         }
 
         int checkpointTileNumber = 1;
-        Tile[][][] tiles = client.getScene().getTiles();
+        Tile[][][] tiles = client.getLocalPlayer().getWorldView().getScene().getTiles();
         List<WorldPoint> checkpointWPs = new ArrayList<>();
         while (index-- > 0)
         {
@@ -346,34 +343,34 @@ public class Pathfinder
         return false;
     }
 
-    private boolean reachRectangularBoundary(int[][] flags, int x, int y, int destX, int destY, int destWidth, int destHeight, int objectflags)
+    private boolean reachRectangularBoundary(int[][] flags, int x, int y, int destX, int destY, int destWidth, int destHeight, int objectFlags)
     {
         int east = destX + destWidth - 1;
         int north = destY + destHeight - 1;
         if (x == destX - 1 && y >= destY && y <= north &&
                 (flags[x][y] & 0x8) == 0 &&
-                (objectflags & 0x8) == 0)
+                (objectFlags & 0x8) == 0)
         {
             //Valid destination tile to the west of the rectangularBoundary
             return true;
         }
         if (x == east + 1 && y >= destY && y <= north &&
                 (flags[x][y] & 0x80) == 0 &&
-                (objectflags & 0x2) == 0)
+                (objectFlags & 0x2) == 0)
         {
             //Valid destination tile to the east of the rectangularBoundary
             return true;
         }
         if (y + 1 == destY && x >= destX && x <= east &&
                 (flags[x][y] & 0x2) == 0 &&
-                (objectflags & 0x4) == 0)
+                (objectFlags & 0x4) == 0)
         {
             //Valid destination tile to the south of the rectangularBoundary
             return true;
         }
         return y == north + 1 && x >= destX && x <= east &&
                 (flags[x][y] & 0x20) == 0 &&
-                (objectflags & 0x1) == 0;
+                (objectFlags & 0x1) == 0;
         //Test for valid destination tile to the north of the rectangularBoundary
     }
 
@@ -426,43 +423,43 @@ public class Pathfinder
 
     private boolean reachLWall(int[][] flags, int x, int y, int destX, int destY, int rot)
     {
-        int WESTWALLFLAGS = 0x12c0108;
-        int NORTHWALLFLAGS = 0x12c0120;
-        int EASTWALLFLAGS = 0x12c0180;
-        int SOUTHWALLFLAGS = 0x12c0102;
+        int westWallFlags = 0x12c0108;
+        int northWallFlags = 0x12c0120;
+        int eastWallFlags = 0x12c0180;
+        int southWallFlags = 0x12c0102;
         switch (rot)
         {
             case 0:
             {
-                WESTWALLFLAGS = 0;
-                NORTHWALLFLAGS = 0;
+                westWallFlags = 0;
+                northWallFlags = 0;
                 break;
             }
             case 1:
             {
-                NORTHWALLFLAGS = 0;
-                EASTWALLFLAGS = 0;
+                northWallFlags = 0;
+                eastWallFlags = 0;
                 break;
             }
             case 2:
             {
-                EASTWALLFLAGS = 0;
-                SOUTHWALLFLAGS = 0;
+                eastWallFlags = 0;
+                southWallFlags = 0;
                 break;
             }
             case 3:
             {
-                SOUTHWALLFLAGS = 0;
-                WESTWALLFLAGS = 0;
+                southWallFlags = 0;
+                westWallFlags = 0;
             }
         }
-        if (x == destX - 1 && y == destY && (flags[x][y] & WESTWALLFLAGS) == 0)
+        if (x == destX - 1 && y == destY && (flags[x][y] & westWallFlags) == 0)
             return true;
-        if (x == destX && y == destY + 1 && (flags[x][y] & NORTHWALLFLAGS) == 0)
+        if (x == destX && y == destY + 1 && (flags[x][y] & northWallFlags) == 0)
             return true;
-        if (x == destX + 1 && y == destY && (flags[x][y] & EASTWALLFLAGS) == 0)
+        if (x == destX + 1 && y == destY && (flags[x][y] & eastWallFlags) == 0)
             return true;
-        return x == destX && y == destY - 1 && (flags[x][y] & SOUTHWALLFLAGS) == 0;
+        return x == destX && y == destY - 1 && (flags[x][y] & southWallFlags) == 0;
     }
 
     private boolean reachDiagonalWallDecoration(int[][] flags, int x, int y, int destX, int destY, int rot)

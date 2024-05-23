@@ -207,7 +207,7 @@ public class PathMarkerPlugin extends Plugin
         overlayManager.add(minimapOverlay);
         keyManager.registerKeyListener(keyListener);
         mouseManager.registerMouseListener(mouseListener);
-        pathfinder = new Pathfinder(client, config, this);
+        pathfinder = new Pathfinder(client, this);
     }
 
     @Override

@@ -8,7 +8,6 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.ui.overlay.OverlayUtil;
 
 import javax.inject.Inject;
@@ -21,7 +20,7 @@ public class PathMarkerOverlay extends Overlay
     private final PathMarkerPlugin plugin;
 
     @Inject
-    private PathMarkerConfig config;
+    private final PathMarkerConfig config;
 
     @Inject
     private PathMarkerOverlay(Client client, PathMarkerConfig config, PathMarkerPlugin plugin)
@@ -30,7 +29,6 @@ public class PathMarkerOverlay extends Overlay
         this.plugin = plugin;
         this.config = config;
         setPosition(OverlayPosition.DYNAMIC);
-        setPriority(OverlayPriority.LOW);
         setLayer(OverlayLayer.ABOVE_SCENE);
     }
 
@@ -124,7 +122,7 @@ public class PathMarkerOverlay extends Overlay
     private void renderTile(Graphics2D graphics, WorldPoint worldPoint, Color stroke_color, Color fill_color)
     {
         Stroke stroke = new BasicStroke(1);
-        LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
+        LocalPoint lp = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), worldPoint);
         if (lp == null)
         {
             return;
@@ -141,19 +139,18 @@ public class PathMarkerOverlay extends Overlay
     private void renderDots(Graphics2D graphics, WorldPoint worldPoint, Color stroke_color, Color fill_color)
     {
         Stroke stroke = new BasicStroke(2);
-        LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
+        LocalPoint lp = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), worldPoint);
         if (lp == null)
         {
             return;
         }
         final Point screenPoint = Perspective.localToCanvas(client, lp, 0);
-        final Ellipse2D dot = new Ellipse2D.Double( screenPoint.getX(), screenPoint.getY(), 8.0d, 8.0d );
-        if (dot == null)
-        {
-            return;
-        }
 
-        OverlayUtil.renderPolygon(graphics, dot, stroke_color, fill_color, stroke);
+        if (screenPoint != null)
+        {
+            Ellipse2D dot = new Ellipse2D.Double( screenPoint.getX(), screenPoint.getY(), 8.0d, 8.0d );
+            OverlayUtil.renderPolygon(graphics, dot, stroke_color, fill_color, stroke);
+        }
     }
 
 }

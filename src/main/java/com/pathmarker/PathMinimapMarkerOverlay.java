@@ -5,12 +5,11 @@ import net.runelite.api.Point;
 import net.runelite.api.Varbits;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -21,9 +20,7 @@ public class PathMinimapMarkerOverlay extends Overlay
     private final PathMarkerPlugin plugin;
 
     @Inject
-    private PathMarkerConfig config;
-
-    private double angle;
+    private final PathMarkerConfig config;
 
     @Inject
     private PathMinimapMarkerOverlay(Client client, PathMarkerConfig config, PathMarkerPlugin plugin)
@@ -32,29 +29,28 @@ public class PathMinimapMarkerOverlay extends Overlay
         this.plugin = plugin;
         this.config = config;
         setPosition(OverlayPosition.DYNAMIC);
-        setPriority(OverlayPriority.LOW);
         setLayer(OverlayLayer.ABOVE_WIDGETS);
     }
 
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        angle = client.getMapAngle() * 0.0030679615D;
+        double angle = client.getCameraYawTarget() * 0.0030679615D;
         Widget minimapDrawWidget;
         if (client.isResized())
         {
             if (client.getVarbitValue(Varbits.SIDE_PANELS) == 1)
             {
-                minimapDrawWidget = client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_DRAW_AREA);
+                minimapDrawWidget = client.getWidget(ComponentID.RESIZABLE_VIEWPORT_BOTTOM_LINE_MINIMAP_DRAW_AREA);
             }
             else
             {
-                minimapDrawWidget = client.getWidget(WidgetInfo.RESIZABLE_MINIMAP_STONES_DRAW_AREA);
+                minimapDrawWidget = client.getWidget(ComponentID.RESIZABLE_VIEWPORT_MINIMAP_DRAW_AREA);
             }
         }
         else
         {
-            minimapDrawWidget = client.getWidget(WidgetInfo.FIXED_VIEWPORT_MINIMAP_DRAW_AREA);
+            minimapDrawWidget = client.getWidget(ComponentID.FIXED_VIEWPORT_MINIMAP_DRAW_AREA);
         }
         if (minimapDrawWidget == null || minimapDrawWidget.isHidden())
         {
@@ -118,7 +114,7 @@ public class PathMinimapMarkerOverlay extends Overlay
 
     private void renderMinimapTile(Graphics2D graphics, WorldPoint worldPoint, Color color, Point miniMapPoint)
     {
-        LocalPoint lp = LocalPoint.fromWorld(client, worldPoint);
+        LocalPoint lp = LocalPoint.fromWorld(client.getLocalPlayer().getWorldView(), worldPoint);
         if (lp == null)
         {
             return;
