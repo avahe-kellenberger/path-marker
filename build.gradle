@@ -24,7 +24,7 @@ dependencies {
 }
 
 group = 'com.pathmarker'
-version = '1.04'
+version = '1.05'
 sourceCompatibility = '1.8'
 
 tasks.withType(JavaCompile) {
