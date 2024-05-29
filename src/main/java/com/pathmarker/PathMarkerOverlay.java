@@ -144,7 +144,7 @@ public class PathMarkerOverlay extends Overlay
         {
             return;
         }
-        final Point screenPoint = Perspective.localToCanvas(client, lp, 0);
+        final Point screenPoint = Perspective.localToCanvas(client, lp, client.getLocalPlayer().getWorldView().getPlane());
 
         if (screenPoint != null)
         {
